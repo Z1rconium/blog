@@ -513,6 +513,9 @@ const PDFViewerApplication = {
     }
   },
   run(config) {
+    if (config.defaultUrl) {
+    _app_options.AppOptions.set('defaultUrl',config.defaultUrl)
+    }
     this.initialize(config).then(webViewerInitialized);
   },
   get initialized() {
@@ -13896,6 +13899,9 @@ function webViewerLoad() {
   } catch (ex) {
     console.error(`webviewerloaded: ${ex}`);
     document.dispatchEvent(event);
+  }
+  if (fileUrl) {
+    config.defaultUrl = fileUrl
   }
   _app.PDFViewerApplication.run(config);
 }
