@@ -90,10 +90,6 @@ div#archive {
   background: url(https://img.wcq060324.xyz/i/2025/02/03/ud9i2x.jpg) no-repeat center center;
   background-size: cover;
 }
-:root {
-    --ichika-color: #49A6E9;
-}
-
 /* 公告&欢迎页 */
 .card-announcement {
     line-height:30px;
@@ -107,5 +103,5 @@ div#archive {
 .card-announcement span{
     font-weight:bold;
     font-size:20px!important;
-    color:var(--ichika-color);
-}
+    color:var(rgba(158, 204, 171, 0.5));
+}。
