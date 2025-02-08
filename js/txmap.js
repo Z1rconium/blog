@@ -1,5 +1,5 @@
 //get请求
-.ajax({
+$.ajax({
     type: 'get',
     url: 'https://apis.map.qq.com/ws/location/v1/ip',
     data: {
