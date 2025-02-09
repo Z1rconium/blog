@@ -162,7 +162,7 @@ div#archive {
   background: #191919ee;
 }
 #footer {
-    background: rgba(255,255,255,1);
+    background: rgba(255,255,255,.15);
     color: #000;
     border-top-right-radius: 20px;
     border-top-left-radius: 20px;
