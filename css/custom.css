@@ -2,8 +2,8 @@
 #fps {
   position: fixed;
   /* 指定位置 */
-  left: 25px;
-  bottom: 70px;
+  left: 10px;
+  bottom: 10px;
   z-index: 1919810;
 }
 [data-theme="light"] #fps {
@@ -167,19 +167,6 @@ div#archive {
     border-top-right-radius: 20px;
     border-top-left-radius: 20px;
     backdrop-filter: saturate(100%) blur(5px)
-}
-
-div#runtime {
-    width: fit-content;
-    color: #fff;
-    padding: 0 10px;
-    border-radius: 10px;
-    background-color: rgba(0, 0, 0, 0.7);
-}
-
-[data-theme="dark"] div#runtime {
-    color: #28b4c8;
-    box-shadow: 0 0 5px rgba(28, 69, 218, 0.71);
 }
 /* 页脚与头图透明 */
 #footer {
