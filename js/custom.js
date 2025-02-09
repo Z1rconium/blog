@@ -32,6 +32,6 @@ setInterval(() => {
     if (time[0] != 0) {
         currentTimeHtml += time[0] + ' YEAR '
     }
-    currentTimeHtml += time[1] + ' DAYS ' + time[2] + ' : ' + time[3] + ' : ' + time[4];
+    currentTimeHtml += time[1] + ' DAYS ' + time[2] + ' HOURS ' + time[3] + ' MINS ' + time[4] + ' SECS ';
     document.getElementById("runtime").innerHTML = currentTimeHtml;
 }, 1000);
