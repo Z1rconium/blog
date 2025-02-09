@@ -3,7 +3,7 @@
   position: fixed;
   /* 指定位置 */
   left: 3px;
-  bottom: 3px;
+  bottom: 40px;
   z-index: 1919810;
 }
 [data-theme="light"] #fps {
