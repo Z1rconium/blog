@@ -1,1482 +1,956 @@
 <?xml version="1.0" encoding="utf-8"?>
-<search> 
-  
-  
-    
-    <entry>
-      <title>Hexo博客的部署</title>
-      <link href="/posts/58bf4b96.html"/>
-      <url>/posts/58bf4b96.html</url>
-      
-        <content type="html"><![CDATA[<p>&emsp;&emsp;对于Hexo博客的部署，主要有两种方法，一种是最为常用的部署到Github仓库，在经过Github Page展现为一个网站。另一种则是在你个人的VPS上建立一个Github仓库，部署到VPS的Github仓库中去后访问你的VPS来获得静态网页文件。<br>&emsp;&emsp;对于前者，优势在于是完全免费的（如果不绑定域名的话），但是每次Deploy后都会有一段三四分钟的更新时间，无法及时的更新。同时，Github Page对于上传的文件总大小以及当个文件大小均有一定限制（详见Github官网）。对于后者，可以克服Github Page的所有缺点，但是租用VPS会产生一定的花费，能否直连也取决于你的VPS的线路。你可以根据自己的需求在两者之间做出取舍。</p><h1 id="Github部署"><a href="#Github部署" class="headerlink" title="Github部署"></a>Github部署</h1><h2 id="创建Github仓库"><a href="#创建Github仓库" class="headerlink" title="创建Github仓库"></a>创建Github仓库</h2><p>&emsp;&emsp;首先你得注册一个Github账号（毫无疑问而且毫无难度，注册过程不再赘述）。注册完成后进入主页，并且进入Repositories界面，点击右上角的New按钮新建一个仓库。Repository name和Description可以随便填。但是需要注意的是，如果你手上没有域名并且想访问你的博客，则Repository name一定要是<code>你的用户名</code>.github.io，如果你有域名则可以随便填。<br><img src="https://img.wcq060324.xyz/i/2025/02/08/zla3m2.jpeg" alt="QQ截图20250208214853"></p><h2 id="修改Deploy配置"><a href="#修改Deploy配置" class="headerlink" title="修改Deploy配置"></a>修改Deploy配置</h2><p>&emsp;&emsp;进入博客项目目录，找到_config.yml文件，这是Hexo的配置文件，需要修改其中的一些设置，以适应GitHub Pages。①在deploy字段下，设置type为git，表示使用Git进行部署。②设置repo为您的GitHub仓库地址，格式为<a href="https://APIkey@github.com/your">https://APIkey@github.com/your</a> user name&#x2F;your repository name。其中APIkey为访问你的Github库必不可少的一部分，后文会讲到，在your user name和your repository name分别填上你的Github账户名称和仓库名称。然后将branch设置为master，如果你的分支不叫master请修改为你的分支。</p><h2 id="创建Github仓库访问秘钥"><a href="#创建Github仓库访问秘钥" class="headerlink" title="创建Github仓库访问秘钥"></a>创建Github仓库访问秘钥</h2><p>&emsp;&emsp;在Github主页点击你的头像，进入setting，再点击左侧最下面的developer setting，选择Personal access tokens中的Tokens (classic)，然后generate new token（classic），选择你要赋予的权限（如果不清楚可以全选，但是实际上只要把仓库部署的Github Page的权限给她就可以，并设置失效时间，可以设置永远有效，不过需要考虑安全问题），然后将personal access token复制下来（你只能看着一次，之后不会再出现了！！！）。这一段便是需要填在repo中APIkey的内容。<br><img src="https://img.wcq060324.xyz/i/2025/02/08/10fxphc.jpeg" alt="QQ截图20250208220346"></p><h2 id="设置Git用户名和邮箱地址"><a href="#设置Git用户名和邮箱地址" class="headerlink" title="设置Git用户名和邮箱地址"></a>设置Git用户名和邮箱地址</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">git config --global user.name <span class="string">&quot;username&quot;</span></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">git config --global user.email useremail</span> </span><br></pre></td></tr></table></figure><h2 id="安装-Git-插件"><a href="#安装-Git-插件" class="headerlink" title="安装 Git 插件"></a>安装 Git 插件</h2><p>&emsp;&emsp;运行脚本已安装gei-deploy插件：<code>$  npm install hexo-deployer-git --save</code></p><h2 id="Deloy"><a href="#Deloy" class="headerlink" title="Deloy"></a>Deloy</h2><p>&emsp;&emsp;完成上面所有设置后，就可以运行hexo三件套完成部署了，部署完成后可以通过 你的用户名.github.io 来访问博客了（如果你没有域名的话），如果你有域名，下面介绍如何将域名和你的Github Page绑定。</p><h2 id="将域名绑定到Github-Page"><a href="#将域名绑定到Github-Page" class="headerlink" title="将域名绑定到Github Page"></a>将域名绑定到Github Page</h2><p>&emsp;&emsp;首先来到Cloudflare，为你的域名添加一个<code>CNAME</code>标记，指向<code>你的用户名</code>.github.io，最好开上小云朵（国内连Github的速度感人）。<br><img src="https://img.wcq060324.xyz/i/2025/02/08/10pyxm8.jpeg" alt="QQ截图20250208222028"><br>&emsp;&emsp;然后进入你的仓库的settings，在Build and deployment部分设置好你的Branch，然后再Custom domain部分填入上面解析好的域名，经过检测后便可以点击Save保存。完成后，就可以用你的域名进行访问了！！！<br><img src="https://img.wcq060324.xyz/i/2025/02/08/10s9d9i.jpeg" alt="QQ截图20250208222417"></p><hr><h1 id="VPS部署"><a href="#VPS部署" class="headerlink" title="VPS部署"></a>VPS部署</h1><p>&emsp;&emsp;首先你肯定要去购置一个VPS嘛。这里不多做赘述，你可以选择国内的VPS，也可以选择海外的VPS（会便宜一点），但是一定要注意最好是可以直连的，有优化线路那就更好啦（方便访问）。</p><h2 id="配置-SSH-密钥"><a href="#配置-SSH-密钥" class="headerlink" title="配置 SSH 密钥"></a>配置 SSH 密钥</h2><p>&emsp;&emsp;为了使本地可以跟远程的 github 建立联系，需要在本地配置 SSH 密钥，这样我们就可以在本地直接提交代码到 GitHub 上或者远端 git 仓库。如果你是第一次配置 SSH，则配置一下 git 的 username 和 email。之后生成 SSH 密钥：<code>$ ssh-keygen -t rsa -C &quot;你刚刚设置的邮箱&quot;</code>如果不需要设置密码的话，连续三个回车就好了。建议直接桌面git bash，在这之后会得到两个文件： id_rsa 和 id_rsa.pub。找到 id_rsa.pub 文件，用记事本打开，复制其内容。</p><h2 id="安装Git"><a href="#安装Git" class="headerlink" title="安装Git"></a>安装Git</h2><p>&emsp;&emsp;在终端里输入如下代码输入，然后回车：<code>$ apt-get install git</code><br>&emsp;&emsp;等待一下就安装好了。中途会出现<code>Is this ok [y/d/N]:</code>，输入 ： y 回车即可。</p><h2 id="Git配置"><a href="#Git配置" class="headerlink" title="Git配置"></a>Git配置</h2><p>&emsp;&emsp;在命令框输入：<code>$ adduser git</code><br>&emsp;&emsp;添加 git 账户权限</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">chmod</span> 740 /etc/sudoers</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">vim /etc/sudoers</span></span><br></pre></td></tr></table></figure><p>&emsp;&emsp;找到一下内容的地方：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">## Allow root to run any commands anywhere</span><br><span class="line">root    ALL=(ALL)     ALL</span><br></pre></td></tr></table></figure><p>&emsp;&emsp;添加以下内容：<code>git     ALL=(ALL)     ALL</code><br>&emsp;&emsp;改回权限：<code>chmod 400 /etc/sudoers</code><br>&emsp;&emsp;设置 git 账户密码：<code>sudo passwd git</code><br>&emsp;&emsp;切换至 git 用户，创建 ~&#x2F;.ssh 文件夹和 ~&#x2F;.ssh&#x2F;authorized_keys 文件，并赋予相应的权限</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">su git</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">mkdir</span> ~/.ssh</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">vim ~/.ssh/authorized_keys</span></span><br></pre></td></tr></table></figure><p>&emsp;&emsp;将我们在主机中生成的 id_rsa.pub 文件中的公钥复制到 authorized_keys 中，按”esc”，然后按”:wq”，保存退出。接着，输入一下命令，赋予权限:</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">chmod</span> 600 /home/git/.ssh/authorized_keys</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">chmod</span> 700 /home/git/.ssh</span></span><br></pre></td></tr></table></figure><p>&emsp;&emsp;在 var 目录下创建 repo 作为 Git 仓库目录，返回服务端命令行切换到 root 账户，然后输入：<code>mkdir /var/repo</code>,赋予权限：<code>chmod -R 755 /var/repo</code>接下来创建 hexo 目录作为网站根目录，并赋予权限：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">mkdir</span> /var/hexo</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">chown</span> -R git:git /var/hexo</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">chmod</span> -R 755 /var/hexo</span></span><br></pre></td></tr></table></figure><p>&emsp;&emsp;接下来创建一个空白的 git 仓库:</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cd</span> /var/repo</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">git init --bare hexo.git</span></span><br></pre></td></tr></table></figure><p>&emsp;&emsp;创建一个新的 Git 钩子，用于自动部署。在 &#x2F;var&#x2F;repo&#x2F;hexo.git 下，有一个自动生成的 hooks 文件夹。我们需要在里边新建一个新的钩子文件 post-receive：<code>vim /var/repo/hexo.git/hooks/post-receive</code><br>进入编辑模式，然后将下面那两行代码粘贴进去，保存退出，并且修改权限：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line">git --work-tree=/var/hexo --git-dir=/var/repo/hexo.git checkout -f</span><br></pre></td></tr></table></figure><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">chown</span> -R git:git /var/repo/hexo.git/hooks/post-receive</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">chmod</span> +x /var/repo/hexo.git/hooks/post-receive</span></span><br></pre></td></tr></table></figure><p>&emsp;&emsp;到这里 Git 仓库已经搭建完毕了。</p><h2 id="使用宝塔面板配置Nginx"><a href="#使用宝塔面板配置Nginx" class="headerlink" title="使用宝塔面板配置Nginx"></a>使用宝塔面板配置Nginx</h2><p>&emsp;&emsp;宝塔面板的安装和在宝塔中Nginx的安装不在这里详细介绍了，详见宝塔的官网：<a href="https://www.bt.cn/new/index.html">https://www.bt.cn/new/index.html</a> （可视化面板安装Nignx相信对于你来说一定是小儿科吧！！！）<br>&emsp;&emsp;部署完成之后，点击网站，添加站点，填写你的域名，没有的话写你的服务器 ip 地址。其他的不要改。填写完之后提交，然后点击“设置”<br><img src="https://img.wcq060324.xyz/i/2025/02/08/1187wb5.jpeg" alt="QQ截图20250208225059"><br>&emsp;&emsp;点击” 配置文件”并修改（除了所展示的内容其他不做修改）：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">server</span><br><span class="line">&#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    # server_name填写你自己的域名，没有的话填ip(域名最好加上sw)</span><br><span class="line">    server_name hjxlog.com;</span><br><span class="line">    index index.php index.html index.htm default.php default.htm default.html;</span><br><span class="line">    # 这里root填写自己的网站根目录，修改为/var/hexo</span><br><span class="line">    root /var/hexo;</span><br></pre></td></tr></table></figure><p>&emsp;&emsp;保存，然后选择 “设置”-“网站目录”，将网站目录修改成以下，保存:<code>/var/hexo</code><br><img src="https://img.wcq060324.xyz/i/2025/02/08/118wy1l.jpeg" alt="QQ截图20250208225216"><br>&emsp;&emsp;回到服务器终端，重启宝塔服务，使之生效：<code>service bt restart</code></p><h2 id="修改-Hexo-配置"><a href="#修改-Hexo-配置" class="headerlink" title="修改 Hexo 配置"></a>修改 Hexo 配置</h2><p>&emsp;&emsp;进入本地电脑 hexo 博客的根目录，编辑站点配置文件 _config.yml，找到 deploy，修改成以下，如果没有做域名解析的话，可以将填写域名的地方换成VPS的ip地址，访问时也只能通过ip地址进行。</p><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="comment">#repo改为repo: git@你的域名:/var/repo/hexo.git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">git@your</span> <span class="string">domin:/var/repo/hexo.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure><p>之后为了防止因为权限问题导致无法git，先设置权限：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">chown</span> -R git:git /var/repo/</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">chown</span> -R git:git /var/hexo/</span></span><br></pre></td></tr></table></figure><p>完成后便可以使用Hexo三件套完成部署并访问！！！</p><h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p>&emsp;&emsp;当然你也可以使用多种Deploy方式共存的方法实现博客的多地部署，只需要将配置文件 <em>config.yml的deploy选项修改为如下格式（本来没什么意义的，但是转念一想，万一VPS遇到些机房搬迁的时，留一个Github仓库也未尝不是一件好事^</em>^）：</p><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">    <span class="attr">repo:</span> <span class="string">git@your</span> <span class="string">domin:/var/repo/hexo.git</span></span><br><span class="line">    <span class="attr">branch:</span> <span class="string">master</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">    <span class="attr">repo:</span> <span class="string">https://access</span> <span class="string">key@github.com/your</span> <span class="string">user</span> <span class="string">name/blog</span></span><br><span class="line">    <span class="attr">branch:</span> <span class="string">main</span></span><br></pre></td></tr></table></figure><hr><p>完结撒花(๑´ㅂ&#96;๑)</p>]]></content>
-      
-      
+<search>
+  <entry>
+    <title>Hexo博客的部署</title>
+    <url>/posts/58bf4b96.html</url>
+    <content><![CDATA[<p>&emsp;&emsp;对于Hexo博客的部署，主要有两种方法，一种是最为常用的部署到Github仓库，在经过Github Page展现为一个网站。另一种则是在你个人的VPS上建立一个Github仓库，部署到VPS的Github仓库中去后访问你的VPS来获得静态网页文件。<br>&emsp;&emsp;对于前者，优势在于是完全免费的（如果不绑定域名的话），但是每次Deploy后都会有一段三四分钟的更新时间，无法及时的更新。同时，Github Page对于上传的文件总大小以及当个文件大小均有一定限制（详见Github官网）。对于后者，可以克服Github Page的所有缺点，但是租用VPS会产生一定的花费，能否直连也取决于你的VPS的线路。你可以根据自己的需求在两者之间做出取舍。</p>
+<h1 id="Github部署"><a href="#Github部署" class="headerlink" title="Github部署"></a>Github部署</h1><h2 id="创建Github仓库"><a href="#创建Github仓库" class="headerlink" title="创建Github仓库"></a>创建Github仓库</h2><p>&emsp;&emsp;首先你得注册一个Github账号（毫无疑问而且毫无难度，注册过程不再赘述）。注册完成后进入主页，并且进入Repositories界面，点击右上角的New按钮新建一个仓库。Repository name和Description可以随便填。但是需要注意的是，如果你手上没有域名并且想访问你的博客，则Repository name一定要是<code>你的用户名</code>.github.io，如果你有域名则可以随便填。<br><img src="https://img.wcq060324.xyz/i/2025/02/08/zla3m2.jpeg" alt="QQ截图20250208214853"></p>
+<h2 id="修改Deploy配置"><a href="#修改Deploy配置" class="headerlink" title="修改Deploy配置"></a>修改Deploy配置</h2><p>&emsp;&emsp;进入博客项目目录，找到_config.yml文件，这是Hexo的配置文件，需要修改其中的一些设置，以适应GitHub Pages。①在deploy字段下，设置type为git，表示使用Git进行部署。②设置repo为您的GitHub仓库地址，格式为<a href="https://APIkey@github.com/your">https://APIkey@github.com/your</a> user name&#x2F;your repository name。其中APIkey为访问你的Github库必不可少的一部分，后文会讲到，在your user name和your repository name分别填上你的Github账户名称和仓库名称。然后将branch设置为master，如果你的分支不叫master请修改为你的分支。</p>
+<h2 id="创建Github仓库访问秘钥"><a href="#创建Github仓库访问秘钥" class="headerlink" title="创建Github仓库访问秘钥"></a>创建Github仓库访问秘钥</h2><p>&emsp;&emsp;在Github主页点击你的头像，进入setting，再点击左侧最下面的developer setting，选择Personal access tokens中的Tokens (classic)，然后generate new token（classic），选择你要赋予的权限（如果不清楚可以全选，但是实际上只要把仓库部署的Github Page的权限给她就可以，并设置失效时间，可以设置永远有效，不过需要考虑安全问题），然后将personal access token复制下来（你只能看着一次，之后不会再出现了！！！）。这一段便是需要填在repo中APIkey的内容。<br><img src="https://img.wcq060324.xyz/i/2025/02/08/10fxphc.jpeg" alt="QQ截图20250208220346"></p>
+<h2 id="设置Git用户名和邮箱地址"><a href="#设置Git用户名和邮箱地址" class="headerlink" title="设置Git用户名和邮箱地址"></a>设置Git用户名和邮箱地址</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">git config --global user.name <span class="string">&quot;username&quot;</span></span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">git config --global user.email useremail</span> </span><br></pre></td></tr></table></figure>
+<h2 id="安装-Git-插件"><a href="#安装-Git-插件" class="headerlink" title="安装 Git 插件"></a>安装 Git 插件</h2><p>&emsp;&emsp;运行脚本已安装gei-deploy插件：<code>$  npm install hexo-deployer-git --save</code></p>
+<h2 id="Deloy"><a href="#Deloy" class="headerlink" title="Deloy"></a>Deloy</h2><p>&emsp;&emsp;完成上面所有设置后，就可以运行hexo三件套完成部署了，部署完成后可以通过 你的用户名.github.io 来访问博客了（如果你没有域名的话），如果你有域名，下面介绍如何将域名和你的Github Page绑定。</p>
+<h2 id="将域名绑定到Github-Page"><a href="#将域名绑定到Github-Page" class="headerlink" title="将域名绑定到Github Page"></a>将域名绑定到Github Page</h2><p>&emsp;&emsp;首先来到Cloudflare，为你的域名添加一个<code>CNAME</code>标记，指向<code>你的用户名</code>.github.io，最好开上小云朵（国内连Github的速度感人）。<br><img src="https://img.wcq060324.xyz/i/2025/02/08/10pyxm8.jpeg" alt="QQ截图20250208222028"><br>&emsp;&emsp;然后进入你的仓库的settings，在Build and deployment部分设置好你的Branch，然后再Custom domain部分填入上面解析好的域名，经过检测后便可以点击Save保存。完成后，就可以用你的域名进行访问了！！！<br><img src="https://img.wcq060324.xyz/i/2025/02/08/10s9d9i.jpeg" alt="QQ截图20250208222417"></p>
+<hr>
+<h1 id="VPS部署"><a href="#VPS部署" class="headerlink" title="VPS部署"></a>VPS部署</h1><p>&emsp;&emsp;首先你肯定要去购置一个VPS嘛。这里不多做赘述，你可以选择国内的VPS，也可以选择海外的VPS（会便宜一点），但是一定要注意最好是可以直连的，有优化线路那就更好啦（方便访问）。</p>
+<h2 id="配置-SSH-密钥"><a href="#配置-SSH-密钥" class="headerlink" title="配置 SSH 密钥"></a>配置 SSH 密钥</h2><p>&emsp;&emsp;为了使本地可以跟远程的 github 建立联系，需要在本地配置 SSH 密钥，这样我们就可以在本地直接提交代码到 GitHub 上或者远端 git 仓库。如果你是第一次配置 SSH，则配置一下 git 的 username 和 email。之后生成 SSH 密钥：<code>$ ssh-keygen -t rsa -C &quot;你刚刚设置的邮箱&quot;</code>如果不需要设置密码的话，连续三个回车就好了。建议直接桌面git bash，在这之后会得到两个文件： id_rsa 和 id_rsa.pub。找到 id_rsa.pub 文件，用记事本打开，复制其内容。</p>
+<h2 id="安装Git"><a href="#安装Git" class="headerlink" title="安装Git"></a>安装Git</h2><p>&emsp;&emsp;在终端里输入如下代码输入，然后回车：<code>$ apt-get install git</code><br>&emsp;&emsp;等待一下就安装好了。中途会出现<code>Is this ok [y/d/N]:</code>，输入 ： y 回车即可。</p>
+<h2 id="Git配置"><a href="#Git配置" class="headerlink" title="Git配置"></a>Git配置</h2><p>&emsp;&emsp;在命令框输入：<code>$ adduser git</code><br>&emsp;&emsp;添加 git 账户权限</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">chmod</span> 740 /etc/sudoers</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">vim /etc/sudoers</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;找到一下内容的地方：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">## Allow root to run any commands anywhere</span><br><span class="line">root    ALL=(ALL)     ALL</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;添加以下内容：<code>git     ALL=(ALL)     ALL</code><br>&emsp;&emsp;改回权限：<code>chmod 400 /etc/sudoers</code><br>&emsp;&emsp;设置 git 账户密码：<code>sudo passwd git</code><br>&emsp;&emsp;切换至 git 用户，创建 ~&#x2F;.ssh 文件夹和 ~&#x2F;.ssh&#x2F;authorized_keys 文件，并赋予相应的权限</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">su git</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">mkdir</span> ~/.ssh</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">vim ~/.ssh/authorized_keys</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;将我们在主机中生成的 id_rsa.pub 文件中的公钥复制到 authorized_keys 中，按”esc”，然后按”:wq”，保存退出。接着，输入一下命令，赋予权限:</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">chmod</span> 600 /home/git/.ssh/authorized_keys</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">chmod</span> 700 /home/git/.ssh</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;在 var 目录下创建 repo 作为 Git 仓库目录，返回服务端命令行切换到 root 账户，然后输入：<code>mkdir /var/repo</code>,赋予权限：<code>chmod -R 755 /var/repo</code>接下来创建 hexo 目录作为网站根目录，并赋予权限：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">mkdir</span> /var/hexo</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">chown</span> -R git:git /var/hexo</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">chmod</span> -R 755 /var/hexo</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;接下来创建一个空白的 git 仓库:</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cd</span> /var/repo</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">git init --bare hexo.git</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;创建一个新的 Git 钩子，用于自动部署。在 &#x2F;var&#x2F;repo&#x2F;hexo.git 下，有一个自动生成的 hooks 文件夹。我们需要在里边新建一个新的钩子文件 post-receive：<code>vim /var/repo/hexo.git/hooks/post-receive</code><br>进入编辑模式，然后将下面那两行代码粘贴进去，保存退出，并且修改权限：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">!/bin/bash</span></span><br><span class="line">git --work-tree=/var/hexo --git-dir=/var/repo/hexo.git checkout -f</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">chown</span> -R git:git /var/repo/hexo.git/hooks/post-receive</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">chmod</span> +x /var/repo/hexo.git/hooks/post-receive</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;到这里 Git 仓库已经搭建完毕了。</p>
+<h2 id="使用宝塔面板配置Nginx"><a href="#使用宝塔面板配置Nginx" class="headerlink" title="使用宝塔面板配置Nginx"></a>使用宝塔面板配置Nginx</h2><p>&emsp;&emsp;宝塔面板的安装和在宝塔中Nginx的安装不在这里详细介绍了，详见宝塔的官网：<a href="https://www.bt.cn/new/index.html">https://www.bt.cn/new/index.html</a> （可视化面板安装Nignx相信对于你来说一定是小儿科吧！！！）<br>&emsp;&emsp;部署完成之后，点击网站，添加站点，填写你的域名，没有的话写你的服务器 ip 地址。其他的不要改。填写完之后提交，然后点击“设置”<br><img src="https://img.wcq060324.xyz/i/2025/02/08/1187wb5.jpeg" alt="QQ截图20250208225059"><br>&emsp;&emsp;点击” 配置文件”并修改（除了所展示的内容其他不做修改）：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">server</span><br><span class="line">&#123;</span><br><span class="line">    listen 80;</span><br><span class="line">    # server_name填写你自己的域名，没有的话填ip(域名最好加上sw)</span><br><span class="line">    server_name hjxlog.com;</span><br><span class="line">    index index.php index.html index.htm default.php default.htm default.html;</span><br><span class="line">    # 这里root填写自己的网站根目录，修改为/var/hexo</span><br><span class="line">    root /var/hexo;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;保存，然后选择 “设置”-“网站目录”，将网站目录修改成以下，保存:<code>/var/hexo</code><br><img src="https://img.wcq060324.xyz/i/2025/02/08/118wy1l.jpeg" alt="QQ截图20250208225216"><br>&emsp;&emsp;回到服务器终端，重启宝塔服务，使之生效：<code>service bt restart</code></p>
+<h2 id="修改-Hexo-配置"><a href="#修改-Hexo-配置" class="headerlink" title="修改 Hexo 配置"></a>修改 Hexo 配置</h2><p>&emsp;&emsp;进入本地电脑 hexo 博客的根目录，编辑站点配置文件 _config.yml，找到 deploy，修改成以下，如果没有做域名解析的话，可以将填写域名的地方换成VPS的ip地址，访问时也只能通过ip地址进行。</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">  <span class="comment">#repo改为repo: git@你的域名:/var/repo/hexo.git</span></span><br><span class="line">  <span class="attr">repo:</span> <span class="string">git@your</span> <span class="string">domin:/var/repo/hexo.git</span></span><br><span class="line">  <span class="attr">branch:</span> <span class="string">master</span></span><br></pre></td></tr></table></figure>
+<p>之后为了防止因为权限问题导致无法git，先设置权限：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">chown</span> -R git:git /var/repo/</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">chown</span> -R git:git /var/hexo/</span></span><br></pre></td></tr></table></figure>
+<p>完成后便可以使用Hexo三件套完成部署并访问！！！</p>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><p>&emsp;&emsp;当然你也可以使用多种Deploy方式共存的方法实现博客的多地部署，只需要将配置文件 <em>config.yml的deploy选项修改为如下格式（本来没什么意义的，但是转念一想，万一VPS遇到些机房搬迁的时，留一个Github仓库也未尝不是一件好事^</em>^）：</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">deploy:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">    <span class="attr">repo:</span> <span class="string">git@your</span> <span class="string">domin:/var/repo/hexo.git</span></span><br><span class="line">    <span class="attr">branch:</span> <span class="string">master</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">type:</span> <span class="string">git</span></span><br><span class="line">    <span class="attr">repo:</span> <span class="string">https://access</span> <span class="string">key@github.com/your</span> <span class="string">user</span> <span class="string">name/blog</span></span><br><span class="line">    <span class="attr">branch:</span> <span class="string">main</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>完结撒花(๑´ㅂ&#96;๑)</p>
+]]></content>
       <categories>
-          
-          <category> 小技术杂谈 </category>
-          
+        <category>小技术杂谈</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> Hexo博客 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>hexo博客搭建</title>
-      <link href="/posts/afcbc60d.html"/>
-      <url>/posts/afcbc60d.html</url>
-      
-        <content type="html"><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>&emsp;&emsp;Hexo 是一个快速、简洁且高效的博客框架。 Hexo 使用 Markdown（或其他标记语言）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。Hexo是基于Node.js和Git工具的静态博客。</p><h1 id="开始安装"><a href="#开始安装" class="headerlink" title="开始安装"></a>开始安装</h1><h2 id="安装Git"><a href="#安装Git" class="headerlink" title="安装Git"></a>安装Git</h2><p>&emsp;&emsp;你可以选择vps来作为博客的本地，也可以用你的电脑，两者并无区别。选择对应系统的安装方式。<br>&emsp;&emsp;Windows：下载并安装git。( <a href="https://git-scm.com/downloads/win">https://git-scm.com/downloads/win</a> )<br>&emsp;&emsp;Mac：使用 Homebrew, MacPorts 或者下载 安装程序。<br>&emsp;&emsp;Linux (Ubuntu, Debian)：<code>sudo apt-get install git-core</code><br>&emsp;&emsp;Linux (Fedora, Red Hat, CentOS)：<code>sudo yum install git-core</code></p><h2 id="安装Node-js"><a href="#安装Node-js" class="headerlink" title="安装Node.js"></a>安装Node.js</h2><h3 id="Windows"><a href="#Windows" class="headerlink" title="Windows"></a>Windows</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Download and install fnm:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">winget install Schniz.fnm</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Download and install Node.js, you can choose the version on the offical website:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">fnm install 22</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Verify the Node.js version:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">node -v <span class="comment"># Should print &quot;v22.13.1&quot;.</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Verify npm version:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">npm -v <span class="comment"># Should print &quot;10.9.2&quot;.</span></span></span><br></pre></td></tr></table></figure><h3 id="Mac"><a href="#Mac" class="headerlink" title="Mac"></a>Mac</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Download and install fnm:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">curl -o- https://fnm.vercel.app/install | bash</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Download and install Node.js, you can choose the version on the offical website:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">fnm install 22</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Verify the Node.js version:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">node -v <span class="comment"># Should print &quot;v22.13.1&quot;.</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Verify npm version:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">npm -v <span class="comment"># Should print &quot;10.9.2&quot;.</span></span></span><br></pre></td></tr></table></figure><h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">Before you begin, ensure that curl is installed on your system. If curl is not installed, you can install it using the following <span class="built_in">command</span>:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">sudo</span> apt-get install -y curl</span> </span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">Download the setup script:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">curl -fsSL https://deb.nodesource.com/setup_23.x -o nodesource_setup.sh</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">Run the setup script with <span class="built_in">sudo</span>:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">sudo</span> -E bash nodesource_setup.sh</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">Install Node.js:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">sudo</span> apt-get install -y nodejs</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">Verify the installation:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">node -v</span></span><br></pre></td></tr></table></figure><h2 id="安装-Hexo"><a href="#安装-Hexo" class="headerlink" title="安装 Hexo"></a>安装 Hexo</h2><p>&emsp;&emsp;所有必备的应用程序安装完成后，即可使用 npm 安装 Hexo。</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">npm install -g hexo-cli</span> </span><br></pre></td></tr></table></figure><p>&emsp;&emsp;安装 Hexo 完成后，请执行下列命令，Hexo 将会在指定文件夹中新建所需要的文件。</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">hexo init &lt;folder&gt;</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cd</span> &lt;folder&gt;</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">npm install</span></span><br></pre></td></tr></table></figure><p>&emsp;&emsp;请将<code>&lt;folder&gt;</code>换成你所希望设置的博客根目录的名称，可自定义。至此，Hexo博客已安装完成。虽然已经完成了Hexo博客的本地安装，但是依旧无法通过浏览器访问你的博客，因为缺少部署这一步骤^_^更多内容详见<a href="https://blog.wcq060324.xyz/posts/58bf4b96.html">https://blog.wcq060324.xyz/posts/58bf4b96.html</a></p><hr><p>有关部署的细节详见后文O(∩_∩)O哈哈~</p>]]></content>
-      
-      
+      <tags>
+        <tag>Hexo博客</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>LLM对如今医师诊断的作用与影响</title>
+    <url>/posts/8307c908.html</url>
+    <content><![CDATA[<h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>        2020年，OpenAI发布了ChatGPT-3，这犹如一记惊雷引来了全世界的目光，它对自然语言的处理远远超乎人们的想象，ChatGPT-3不仅在文本生成方面表现出色，还展示了在小说创作、诗歌编写、代码生成等多个领域的惊人能力。</p>
+<p>        所谓的LLM和GPT，分别指大型语言模型和生成式预训练变换器。大语言模型，是由具有大量参数（通常数十亿个权重或更多）的人工神经网络组成的一类语言模型，使用自监督学习或半监督学习对大量未标记文本进行训练。而GPT则是LLM的一种，是也是生成式人工智能的重要框架。</p>
+<p>        在临床医学导论课程的学习中，也有专门一节课为“大数据AI时代的医学与医疗服务趋势与思考”，令我印象深刻，课上列举的数据虽然具体数值已经模糊，但是依旧令我难忘。从住院医到主治医师再到副主任医师，其初诊的诊断正确率大概从30%到60%再到80%，但是一个训练好的LLM可以用更短的时间里做出几乎和副主任医师差不多正确率的诊断，令人吃惊。</p>
+<p>        与此同时，AI的技术依旧在不断进步。2024年，OpenAI发布了o1模型，世界上首款具有COT（思维链）的LLM问世，它在逻辑思维能力上再一次打破了人们对AI能力上限的认知。之后，Deepseek、Google、Kimi等公司接续发布具有COT的LLM。尚且不具有COT的LLM便可达到如此精准的判断，那具有COT的LLM在诊断方面大概率会更上一层楼。</p>
+<p>        因此，作为一个AI爱好者，再加上对AI辅助诊断的好奇与希冀，我开始对LLM（大语言模型）对如今医师诊断的作用与影响展开了研究。</p>
+<h1 id="二、亲身测试，从影像学出发"><a href="#二、亲身测试，从影像学出发" class="headerlink" title="二、亲身测试，从影像学出发"></a>二、亲身测试，从影像学出发</h1><p>        首先测试 AI 在医学影像诊断学的诊断正确率，一共测试五题，使用没有 COT 的ChatGPT-4o 模型。题目来源为知乎。</p>
+<p>        1.一青年男性，往有咳嗽、咳痰史，近日受凉后，咳嗽、咳痰加重，时有咯血。X 线片示左肺下野内中带肺纹理增多、紊乱，边缘模糊，其中夹杂大小不等的囊状影，有的囊内有液平。最可能的诊断是（），正确答案 C</p>
+<p>        A、左肺支气管炎         B、左肺继发性肺结核        C、左肺支气管扩张</p>
+<p>        D、左肺下叶肺炎吸收消散期        E、左肺脓肿形成期</p>
+<p><img src="https://img.wcq060324.xyz/i/2025/02/04/krd1b3.jpg" alt="图片5"></p>
+<p>        2. 男性，23岁，低热，右胸疼痛，活动后气促，胸片上：右肺下野有大片致密阴影，上缘呈外高内的弧线状，该侧肋隔角，横隔被遮盖，应诊断为（）正确答案:C</p>
+<p>        A、右下肺大叶性肺炎      B、右下肺不张            C、右侧游离性胸腔积液</p>
+<p>        D、右下肺脓疡           E、右肺下积液</p>
+<p><img src="https://img.wcq060324.xyz/i/2025/02/04/km3tn7.jpg" alt="图片1"></p>
+<p>        3. 一中年女性，5年前行胃部手术，病史不详，最近感全身乏力，偶有咳嗽，无咳血，胸片示两中下肺野多发结节影，密度较淡似棉花团样，应首先考虑以下哪项诊断（）正确答案：D</p>
+<p>        A、亚急性血行播散型肺结核           B、两下肺支气管肺炎</p>
+<p>        C、弥漫性原发肺癌           D、两肺多发转移瘤、肺泡癌</p>
+<p><img src="https://img.wcq060324.xyz/i/2025/02/04/kn8vgy.jpg" alt="图片2"></p>
+<p>        4.男性，40岁，体检发现右肺中野有一小块阴影约2CM大小，轮廓呈分叶状，边缘有短细毛刺，其中可见空泡征。应首先考虑以下哪项诊断（）正确答案：A</p>
+<p>        A、早期周围型肺癌                   B、结核瘤</p>
+<p>        C、炎性假瘤                        D、肺炎                  E、错构瘤</p>
+<p><img src="https://img.wcq060324.xyz/i/2025/02/04/knvaod.jpg" alt="图片3"></p>
+<p>        5. 50岁，男性，发热咳嗽，右肺中叶有点片状阴影，边缘模糊，密度不均匀，经抗炎治疗后复查，该影在同一部位反复出现，应考虑为（）正确答案：C</p>
+<p>        A、病毒性肺炎                 B、干酪性肺炎</p>
+<p>        C、阻塞性肺炎                 D、支原体肺炎             E、过敏性肺炎</p>
+<p><img src="https://img.wcq060324.xyz/i/2025/02/04/kovtvj.jpg" alt="图片4"></p>
+<p>        在每一道题之后的图片左侧的输入为完整的题目（包含选项），而右侧的图片为输入完整题干（不包括选项）让 ChatGPT-4o 自行做出诊断。</p>
+<p>        经过这五道题的测试可见，如果将影像学的具体症状用文字的形式提交给 ChatGPT-4o模型的话，即使没有 COT 即没有所谓的“思考能力”和“逻辑推理能力”的情况下，依旧能够精准的给出正确的选择，做出正确的诊断，并且可以给出具体的分析，甚至对每一个选项都进行影像学特征上的分析。对于直接输入症状的情况，除了个别题目（如 T5）ChatGPT-4o 给出了多种可能性，其余都精准的给出了患者所患有的病症，与此同时在 T5的回答中第二项即为正确答案。</p>
+<p>        虽然用到的题目比较少，但是可以预见的是在临床实践的过程中，在已经获取影像学上的准确描述的情况下，即使不存在选项，LLM（ChatGPT-4o）是可以以接近100%的概率做出正确的诊断的，在有选项的情况下，即在专业医师已经缩小可能范围的情形下，LLM（ChatGPT-4o）给出正确答案的概率还会进一步提高。同时，毋庸置疑的是，在这种需要一定知识和逻辑相结合的场景中，拥有COT的ChatGPT-o1模型或者ChatGPT-o1-mini模型会有更好的表现，面对更加复杂和多情况的病例中也会有更准确的诊断。但由于ChatGPT-4o在没有COT的条件下就已经非常完美的完成了病症的诊断，所以现有条件下无法亲自测试有无COT对诊断成功率的影响。</p>
+<p>        为了进一步测试AI的诊断能力，我于互联网上找到了“肺部结节病2例CT影像分析”的文章，选择了其中一种胸部CT影像测试ChatGPT和Google Gemini两种模型，下面即为影像图片（图像以及诊断网址为<a href="https://www.yxppt.com/archives/190418">https://www.yxppt.com/archives/190418</a> ）：</p>
+<p><img src="https://img.wcq060324.xyz/i/2025/02/04/kts2gu.jpg" alt="图片6"></p>
+<p>        下面是原文对该名患者的描述：</p>
+<p><img src="https://img.wcq060324.xyz/i/2025/02/04/li4tf2.png" alt="图片7"></p>
+<p>        非常遗憾，在春节期间火遍全球的Deepseek模型在这方面显得有些捉襟见肘，因为在Deepseek模型中即使选用最新的R1模型识别图片只能识别文字，没有文字的图片无法输入，所以下面分别测试ChatGPT4o和o1模型和Gemini 2.0 Flash Experimental、Gemini 2.0 FlashThinking Experimental01-21模型。</p>
+<p>        值得注意的是，ChatGPT-4o和Gemini 2.0 Flash Experimental模型均为快速思考，不具有思维链，而ChatGPT-o1和Gemini 2.0 FlashThinking Experimental01-21模型具有思维链，并且Gemini 2.0 Flash Experimental和Gemini 2.0 FlashThinking Experimental01-21模型尚且未正式发布，测试均在AI Studio上进行。（测试时间为2025.1.31，版本号分别为gemini-2.0-flash-exp和gemini-2.0-flash-thinking-exp-01-21）</p>
+<h2 id="①下面用ChatGPT-4o模型进行测试，摘录其回答（该模型无COT）："><a href="#①下面用ChatGPT-4o模型进行测试，摘录其回答（该模型无COT）：" class="headerlink" title="①下面用ChatGPT-4o模型进行测试，摘录其回答（该模型无COT）："></a>①下面用ChatGPT-4o模型进行测试，摘录其回答（该模型无COT）：</h2><p><img src="https://img.wcq060324.xyz/i/2025/02/04/ljs7o5.png" alt="图片8"></p>
+<h2 id="②下面用Gemini-2-0-Flash-Experimental模型进行测试，摘录其回答（该模型无COT，续图在下一页）："><a href="#②下面用Gemini-2-0-Flash-Experimental模型进行测试，摘录其回答（该模型无COT，续图在下一页）：" class="headerlink" title="②下面用Gemini 2.0 Flash Experimental模型进行测试，摘录其回答（该模型无COT，续图在下一页）："></a>②下面用Gemini 2.0 Flash Experimental模型进行测试，摘录其回答（该模型无COT，续图在下一页）：</h2><p><img src="https://img.wcq060324.xyz/i/2025/02/04/ljsg2u.png" alt="图片9"></p>
+<h2 id="③下面用ChatGPT-o1模型进行测试，摘录其回答（该模型有COT）："><a href="#③下面用ChatGPT-o1模型进行测试，摘录其回答（该模型有COT）：" class="headerlink" title="③下面用ChatGPT-o1模型进行测试，摘录其回答（该模型有COT）："></a>③下面用ChatGPT-o1模型进行测试，摘录其回答（该模型有COT）：</h2><p><img src="https://img.wcq060324.xyz/i/2025/02/04/ljsrpe.png" alt="图片10"></p>
+<h2 id="④下面用Gemini-2-0-FlashThinking-Experimental01-21模型进行测试，摘录其回答（该模型有COT）："><a href="#④下面用Gemini-2-0-FlashThinking-Experimental01-21模型进行测试，摘录其回答（该模型有COT）：" class="headerlink" title="④下面用Gemini 2.0 FlashThinking Experimental01-21模型进行测试，摘录其回答（该模型有COT）："></a>④下面用Gemini 2.0 FlashThinking Experimental01-21模型进行测试，摘录其回答（该模型有COT）：</h2><p> <img src="https://img.wcq060324.xyz/i/2025/02/04/ljsu8k.png" alt="图片11"><br> 在该网站上，其诊断如下：<br><img src="https://img.wcq060324.xyz/i/2025/02/04/lllgs5.png" alt="图片12"><br>&emsp;&emsp;四种模型相对比可以清晰的看到，拥有COT（思维链）的ChatGPT-o1和Gemini 2.0 FlashThinking Experimental01-21模型更加准确地诊断出该患者最可能患有结节病，同时结核病也有很大的可能性，这与文章中做出的诊断极度吻合，并且给出了解释，并且还指出了其他的可能性，也与原文指出的可能性基本吻合。非常遗憾的是没有COT的ChatGPT-4o模型给出了结节病的可能性选项，但其他常见的选项并没有涉及，即忽略了其他高可能性的选项。对于同样没有思维链的Gemini 2.0 Flash Experimental模型虽然也指出了患有结节病和肺结核的可能性，但是给出的选项太多了，过于宽泛，对于缩小可能性的范围具有一定的帮助，但是并没有像具有COT的模型那么精确。<br>&emsp;&emsp;不可忽略的是直接通过CT影像来诊断疾病比之前的直接输入对CT影像的描述的难度可以说是指数级的上升，涉及到对多模态的识别，即对图像的识别以及分析，这对逻辑分析能力会有更高的要求，因此拥有COT的AGI模型的表现也要远远好于不具有COT的AGI模型，诊断也十分准确，具有很高的参考价值。如果医生有一个预先的判断再修改prompt对范围加以限定，相信LLM给出的诊断会更加的准确。<br>&emsp;&emsp;当然，这是ChatGPT系列和Google系列模型的运行结果，它是一个综合性的LLM，即AGI（通用人工智能），对于专门服务于医疗行业的LLM，用于训练的数据均于医学相关，相信准确率会进一步提高，对于实践将更有参考价值。</p>
+<h1 id="三、从文献中的实验窥探一隅"><a href="#三、从文献中的实验窥探一隅" class="headerlink" title="三、从文献中的实验窥探一隅"></a>三、从文献中的实验窥探一隅</h1><p>        通过PubMed搜索，我找到了一篇名为《AI-Driven Diagnostic Assistance in Medical Inquiry: Reinforcement Learning Algorithm Development and Validation》的文章，下面为部分原文的翻译以及我的总结概括。（Zou, Xuan et al. “AI-Driven Diagnostic Assistance in Medical Inquiry: Reinforcement Learning Algorithm Development and Validation.” Journal of medical Internet research vol. 26 e54616. 23 Aug. 2024, doi:10.2196&#x2F;54616）        </p>
+<p>        在这篇文章中，科研人员使用一种医疗强化学习查询助手，MedRIA，将查询分为4个阶段：询问症状和病史、进行体格检查（PE）、请求辅助检查（AE）以及以诊断结束查询。MedRIA根据患者特定情况调整查询策略的能力使其成为医疗资源受限地区或人群的有希望的解决方案。</p>
+<p>        中国广东省深圳市疾病预防控制中心收集了来自深圳市 76 家医院的去标识化门诊电子病历。研究人员选择了 2021 年 7 月至 2021 年 11 月急诊科和儿科的记录。如下图所示，这些记录包含非结构化文本信息和结构化实验室测试结果，这些信息使用自然语言处理技术进行了特征提取和标准化。下图提供了一个已处理的EHR例。</p>
+<p> <img src="https://img.wcq060324.xyz/i/2025/02/04/lmzlvd.png" alt="图片13"><br> &emsp;&emsp;为了衡量 MedRIA 的查询与医生进行的查询之间的一致性，研究人员引入了 3 个函数：MSMH(st)、MPE(st) 和 MAE(st)。这些函数量化了医生在当前状态 st 中已询问但 MedRIA 尚未调查的特征数量。具体来说，MSMH(st)、MPE(st) 和 MAE(st) 分别量化了 SMH（症状和病史）特征、PE（体格检查）特征和 AE（辅助检查）特征的数量。在计算 MAE(st) 时，一个实验室测试中的所有特征被视为一个单元。本质上，MAE(st) 计算的是医生在当前状态 st 中已推荐但 MedRIA 遗漏的 AE 数量。相应地，当 MedRIA 选择与 AE 相关的特征时，表明 MedRIA 已推荐了整个检查。<br> &emsp;&emsp;研究人员进行模型建立、数据分析后得出数据结论：“这项研究专注于在急诊科和儿科进行的 2 项回顾性询问和诊断任务。急诊科提供了339,020次咨询记录主要涉及患有各种上呼吸道感染的儿童（中位年龄5.2岁，四分位距 IQR 2.6-26.1岁），其中上呼吸道感染占比73.93% (250,638&#x2F;339,020)。儿科提供了561,659次咨询，记录，主要涉及患有各种上呼吸道感染的儿童（中位年龄 3.8 岁，四分位距 IQR 2.0-5.7 岁），其中上呼吸道感染占比 88.73% (498,408&#x2F;561,659)。在这两种情况下，当 AI 模型进行独立询问时，都表现出较高的诊断性能，受试者工作特征曲线下面积分别为 0.955（95% CI 0.953-0.956）和 0.943（95% CI 0.941-0.944）。当 AI 模型用于与医生进行模拟协作时，它显著减少了医生平均询问次数，分别降至 46%(6.037&#x2F;13.26; 95% CI 6.009-6.064)和43%(6.245&#x2F;14.364; 95% CI 6.225-6.269)同时在这两种场景下，受试者工作特征曲线下面积分别达到 0.972 (95% CI 0.970-0.973)和0.968(95% CI 0.967-0.969)。外部验证显示，标准化的 Kendallτ距离为 0.323 (95% CI 0.301-0.346)，表明 AI 模型与医生的询问一致性”，进而得出结论：“人工智能驱动的诊断助手在独立使用和与临床医生模拟协作中都具有较高的诊断性能。研究发现，其调查过程与临床医生的医疗调查逻辑一致。这些发现突出了诊断助手在协助医疗保健专业人员决策过程中的潜力”。</p>
+<p><img src="https://img.wcq060324.xyz/i/2025/02/04/lo62au.png" alt="图片14"></p>
+<h1 id="四、总结"><a href="#四、总结" class="headerlink" title="四、总结"></a>四、总结</h1><p>        无论是我使用ChatGPT系列模型和Google系列模型两个AGI（综合模型）在影像学方面的测试还是在《AI-Driven Diagnostic<br>Assistance in Medical Inquiry: Reinforcement Learning Algorithm Development and<br>Validation》一文中对医疗强化学习查询助手（MedRIA），都对医学诊断有非常重要的帮助作用。而且在AI版本的迭代中，LLM所具有的多模态识别能力、逻辑推理能力、文本处理能力会越来越强，所积累的大数据也会越来越大，这也意味着LLM对疾病的诊断的精准度也会越来越高，甚至于超越一位专家级别的医生的诊断——人在判断时会受到很多因素的影响，但对于LLM而言，它们只会选择概率最大的那个来提高诊断的正确率，或是给出几个最可能的选项来辅助医生的诊断。</p>
+<p>        但是这就意味着不在需要人类医师坐诊看病了吗？</p>
+<p>        我认为不是的。充其量LLM只能作为一种辅助医生诊断的一种工具用来提高诊断正确率。一位患者去看病，重要的不仅仅是把他得了什么病给准确的判断出来，与医生面对面所带来的安全感、亲切感以及随之所带来的人文关怀也是看病过程中必不可少的东西。试想一下，如果LLM真的完全取代了人类医师，你每次看病的时候都是一个冷冰冰的屏幕对着你，你输入你的症状之后屏幕上弹出你最可能患有的疾病，你是一种什么感觉？你会完全信任那个LLM吗？答案大概率是否定的。但是，如果是一位医生热情亲切地询问了你的症状后，配合LLM的诊断后对你提出一个极有可能是正确的诊断，这次你会相信吗？我想答案是肯定的。这才是我认为的LLM，也就是AI带给医生，带给医疗行业，带给这个时代的意义，而并非取代人类。</p>
+<h1 id="五、附件"><a href="#五、附件" class="headerlink" title="五、附件"></a>五、附件</h1><p>        最后，为了读者可以阅读到格式不会发生变化的文章，最后附上PDF版文件，上文由该PDF文件更改而来，排版略有不同之处还请谅解。</p>
+<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/L1hQ/LLM%EF%BC%88%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%EF%BC%89%E5%AF%B9%E5%A6%82%E4%BB%8A%E5%8C%BB%E5%B8%88%E8%AF%8A%E6%96%AD%E7%9A%84%E4%BD%9C%E7%94%A8%E4%B8%8E%E5%BD%B1%E5%93%8D.pdf ' style='width:100%;height:900px'></iframe>]]></content>
       <categories>
-          
-          <category> 小技术杂谈 </category>
-          
+        <category>论文集合</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> Hexo博客 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>形势与政策-迎新和用老</title>
-      <link href="/posts/e0c00a03.html"/>
-      <url>/posts/e0c00a03.html</url>
-      
-        <content type="html"><![CDATA[<h1 id="原文"><a href="#原文" class="headerlink" title="原文"></a>原文</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/mLcW/%E8%BF%8E%E6%96%B0%E5%92%8C%E7%94%A8%E8%80%81.pdf ' style='width:100%;height:900px'></iframe><h1 id="查重报告"><a href="#查重报告" class="headerlink" title="查重报告"></a>查重报告</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/nnfm/%E8%BF%8E%E6%96%B0%E5%92%8C%E7%94%A8%E8%80%81_%E7%AE%80%E6%B4%81%E6%8A%A5%E5%91%8A.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>袖珍论文</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>hexo博客搭建</title>
+    <url>/posts/afcbc60d.html</url>
+    <content><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>&emsp;&emsp;Hexo 是一个快速、简洁且高效的博客框架。 Hexo 使用 Markdown（或其他标记语言）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。Hexo是基于Node.js和Git工具的静态博客。</p>
+<h1 id="开始安装"><a href="#开始安装" class="headerlink" title="开始安装"></a>开始安装</h1><h2 id="安装Git"><a href="#安装Git" class="headerlink" title="安装Git"></a>安装Git</h2><p>&emsp;&emsp;你可以选择vps来作为博客的本地，也可以用你的电脑，两者并无区别。选择对应系统的安装方式。<br>&emsp;&emsp;Windows：下载并安装git。( <a href="https://git-scm.com/downloads/win">https://git-scm.com/downloads/win</a> )<br>&emsp;&emsp;Mac：使用 Homebrew, MacPorts 或者下载 安装程序。<br>&emsp;&emsp;Linux (Ubuntu, Debian)：<code>sudo apt-get install git-core</code><br>&emsp;&emsp;Linux (Fedora, Red Hat, CentOS)：<code>sudo yum install git-core</code></p>
+<h2 id="安装Node-js"><a href="#安装Node-js" class="headerlink" title="安装Node.js"></a>安装Node.js</h2><h3 id="Windows"><a href="#Windows" class="headerlink" title="Windows"></a>Windows</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Download and install fnm:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">winget install Schniz.fnm</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Download and install Node.js, you can choose the version on the offical website:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">fnm install 22</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Verify the Node.js version:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">node -v <span class="comment"># Should print &quot;v22.13.1&quot;.</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Verify npm version:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">npm -v <span class="comment"># Should print &quot;10.9.2&quot;.</span></span></span><br></pre></td></tr></table></figure>
+<h3 id="Mac"><a href="#Mac" class="headerlink" title="Mac"></a>Mac</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Download and install fnm:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">curl -o- https://fnm.vercel.app/install | bash</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Download and install Node.js, you can choose the version on the offical website:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">fnm install 22</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Verify the Node.js version:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">node -v <span class="comment"># Should print &quot;v22.13.1&quot;.</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Verify npm version:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">npm -v <span class="comment"># Should print &quot;10.9.2&quot;.</span></span></span><br></pre></td></tr></table></figure>
+<h3 id="Linux"><a href="#Linux" class="headerlink" title="Linux"></a>Linux</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">Before you begin, ensure that curl is installed on your system. If curl is not installed, you can install it using the following <span class="built_in">command</span>:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">sudo</span> apt-get install -y curl</span> </span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">Download the setup script:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">curl -fsSL https://deb.nodesource.com/setup_23.x -o nodesource_setup.sh</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">Run the setup script with <span class="built_in">sudo</span>:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">sudo</span> -E bash nodesource_setup.sh</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">Install Node.js:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">sudo</span> apt-get install -y nodejs</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">Verify the installation:</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">node -v</span></span><br></pre></td></tr></table></figure>
+<h2 id="安装-Hexo"><a href="#安装-Hexo" class="headerlink" title="安装 Hexo"></a>安装 Hexo</h2><p>&emsp;&emsp;所有必备的应用程序安装完成后，即可使用 npm 安装 Hexo。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">npm install -g hexo-cli</span> </span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;安装 Hexo 完成后，请执行下列命令，Hexo 将会在指定文件夹中新建所需要的文件。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">hexo init &lt;folder&gt;</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash"><span class="built_in">cd</span> &lt;folder&gt;</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">npm install</span></span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;请将<code>&lt;folder&gt;</code>换成你所希望设置的博客根目录的名称，可自定义。至此，Hexo博客已安装完成。虽然已经完成了Hexo博客的本地安装，但是依旧无法通过浏览器访问你的博客，因为缺少部署这一步骤^_^更多内容详见<a href="https://blog.wcq060324.xyz/posts/58bf4b96.html">https://blog.wcq060324.xyz/posts/58bf4b96.html</a></p>
+<hr>
+<p>有关部署的细节详见后文O(∩_∩)O哈哈~</p>
+]]></content>
       <categories>
-          
-          <category> 论文集合 </category>
-          
+        <category>小技术杂谈</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 袖珍论文 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>基础化学-配合物</title>
-      <link href="/posts/cd4bc04e.html"/>
-      <url>/posts/cd4bc04e.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/lAUX/%E9%85%8D%E5%90%88%E7%89%A9.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>Hexo博客</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>关于Hexo博客预览PDF的方法介绍</title>
+    <url>/posts/6194ef83.html</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;Hexo博客是通过将Markdown文件渲染成html文件来实现网页的展现的，这也就意味着单单一个PDF文件将难以展示在Hexo博客上。下面将介绍三种方法直接展示PDF文件，分别介绍其优劣之处。可以根据个人的需要来选择PDF的展现方式。</p>
+<h1 id="使用hexo-pdf插件"><a href="#使用hexo-pdf插件" class="headerlink" title="使用hexo-pdf插件"></a>使用hexo-pdf插件</h1><p>&emsp;&emsp;hexo-pdf是hexo博客的一个插件，可以让我们在Markdown文件中直接插入PDF文件。</p>
+<h2 id="安装hexo-pdf插件"><a href="#安装hexo-pdf插件" class="headerlink" title="安装hexo-pdf插件"></a>安装hexo-pdf插件</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">npm install --save hexo-pdf</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>&emsp;&emsp;安装完成后，在Markdown文件中合适的地方插入如下代码：</p>
+<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">&#123;% pdf <span class="language-xml"><span class="tag">&lt;<span class="name">url-to-pdf</span>&gt;</span></span> %&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;这里的<code>&lt;url-to-pdf&gt;</code>可以是一个url，也可以是本地的指向需要展示的PDF的路径。</p>
+<h2 id="优劣势"><a href="#优劣势" class="headerlink" title="优劣势"></a>优劣势</h2><p>&emsp;&emsp;这种方法的优势在于可以十分方便地插入PDF，但是只在电脑端可以显示，在移动端将是一片透明，无法显示。如果不面对移动端的访问可以忽略此问题，也可以将PDF导出为图片放在下面方便移动端的用户访问。</p>
+<h1 id="使用标签"><a href="#使用标签" class="headerlink" title="使用&lt;iframe&gt;标签"></a>使用<code>&lt;iframe&gt;</code>标签</h1><p>&emsp;&emsp;Markdown和html有着千丝万缕的联系，html的语法在Markdown里也是完全使用的，大多数浏览器也是支持<code>&lt;iframe&gt;</code>标签。所以可以使用<code>&lt;iframe&gt;</code>标签来实现PDF的预览</p>
+<h2 id="使用-1"><a href="#使用-1" class="headerlink" title="使用"></a>使用</h2><p>&emsp;&emsp;Markdown文件中合适的地方插入如下代码：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">src</span>=<span class="string">&quot;/index.pdf&quot;</span> <span class="attr">width</span>=<span class="string">&quot;100%&quot;</span> <span class="attr">height</span>=<span class="string">&quot;100%&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;在src的引号里放入PDF文件的url或者路径即可，后面的width和height是预览PDF窗口的大小，可以根据自己的需要更改。建议width保持100%，height在500px到900px选择一个值，平衡电脑端和手机端的预览体验。</p>
+<h2 id="优劣势-1"><a href="#优劣势-1" class="headerlink" title="优劣势"></a>优劣势</h2><p>&emsp;&emsp;非常遗憾，移动端只能显示PDF的第一页，但是电脑端显示正常，是一个完整的PDF预览组件。<br>&emsp;&emsp;如果考虑到移动端用户的体验，除了增加图片的预览，还可以用html语法加入一个现在链接（前提是你有该文件的直链url哦^_^），完整代码如下：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">src</span>=<span class="string">&quot;/index.pdf&quot;</span> <span class="attr">width</span>=<span class="string">&quot;100%&quot;</span> <span class="attr">height</span>=<span class="string">&quot;100%&quot;</span>&gt;</span></span><br><span class="line">This browser does not support PDFs. Please download the PDF to view it: <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;/index.pdf&quot;</span>&gt;</span>Download PDF<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;src同上。href里面放入该PDF文件的直链。</p>
+<h1 id="完美的最终解决方案-——-pdf-js"><a href="#完美的最终解决方案-——-pdf-js" class="headerlink" title="完美的最终解决方案 —— pdf.js"></a>完美的最终解决方案 —— pdf.js</h1><h2 id="简介，让我们了解这个了不起的项目吧"><a href="#简介，让我们了解这个了不起的项目吧" class="headerlink" title="简介，让我们了解这个了不起的项目吧"></a>简介，让我们了解这个了不起的项目吧</h2><p>&emsp;&emsp;PDF.js 是一个使用 HTML5 构建的便携式文档格式查看器。<br>&emsp;&emsp;pdf.js 是社区驱动的，并由 Mozilla 支持，目标是为解析和呈现 PDF 创建一个通用的、基于 Web 标准的平台。</p>
+<h2 id="下载并使用"><a href="#下载并使用" class="headerlink" title="下载并使用"></a>下载并使用</h2><h3 id="下载、解压、上传"><a href="#下载、解压、上传" class="headerlink" title="下载、解压、上传"></a>下载、解压、上传</h3><p>&emsp;&emsp;文件的下载可以从pdf.js的官方Github库中下载：<a href="https://github.com/mozilla/pdf.js">https://github.com/mozilla/pdf.js</a>, 可以下载你喜欢的版本，我这里使用的是较老的版本3.4。<br>&emsp;&emsp;下载完后解压并上传到服务器的&#x2F;root&#x2F;blog&#x2F;themes&#x2F;butterfly&#x2F;source&#x2F;js文件夹下，其中“blog”为你hexo博客的根目录，如果你的theme不是Butterfly请将你的theme名称把butterfly更换掉，并将文件夹名称更换为pdfjs（保证下面的代码你可以直接食用O(∩_∩)O哈哈~）</p>
+<h3 id="更改viewer-js文件，防止跨域报错"><a href="#更改viewer-js文件，防止跨域报错" class="headerlink" title="更改viewer.js文件，防止跨域报错"></a>更改viewer.js文件，防止跨域报错</h3><p>&emsp;&emsp;找到位于&#x2F;root&#x2F;blog&#x2F;themes&#x2F;butterfly&#x2F;source&#x2F;js&#x2F;pdfjs&#x2F;web目录下的viewer.js文件，目录更改同上。完成下图所示的更改，将所示代码注释掉！！！</p>
+<p><img src="https://img.wcq060324.xyz/i/2025/02/05/123bvwt.png"></p>
+<h3 id="避免渲染"><a href="#避免渲染" class="headerlink" title="避免渲染"></a>避免渲染</h3><blockquote>
+<p>如果 pdfjs 在 source 文件夹中可能被 Hexo 当成文档渲染出网页，准备当做库使用的文件夹需要告诉 Hexo，让她别当成文档渲染</p>
+</blockquote>
+<p>&emsp;&emsp;在 Hexo 配置文件 <code>_config.yml</code> 中的 <code>skip_render</code> 词条下，把 pdfjs 相对 source 的文件夹路径加入进去</p>
+<figure class="highlight yml"><table><tr><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">js/**</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="使用（PDF文件位于本地）"><a href="#使用（PDF文件位于本地）" class="headerlink" title="使用（PDF文件位于本地）"></a>使用（PDF文件位于本地）</h3><p>&emsp;&emsp;在markdown 文档中使用 <code>&lt;iframe&gt;</code> 控件配合pdf.js 库完成pdf 显示</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">src</span>=<span class="string">&#x27;/js/pdfjs/web/viewer.html?file=&lt;src-to-pdf&gt;&#x27;</span> <span class="attr">style</span>=<span class="string">&#x27;width:100%;height:100%&#x27;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;src中前面那一段为viewer.html相对source文件夹的目录，如果你上面那几步和我完全一样则不用修改，后面的<src-to-pdf>为该PDF文件相对于source文件夹的路径。后面的style则是长宽的设置，完全按照你的喜好设置即可。</p>
+<p>&emsp;&emsp;那如果是url呢？好问题，如果你和我一样把PDF文件存储在我自己搭建的cloudreve网盘里，这时候你会遇到一系列的报错，不同的浏览器报错内容不同，但是大概就是COR的问题，即跨域访问被拒绝的原因。下面介绍如何实现COR使用url来插入PDF！（PS：如果你通过其他方式来获得了PDF文件的直链，我不知道会不会发生和我一样的报错^_^）</p>
+<h3 id="使用url来预览PDF"><a href="#使用url来预览PDF" class="headerlink" title="使用url来预览PDF"></a>使用url来预览PDF</h3><p>&emsp;&emsp;首先你得先将<code>&lt;src-to-pdf&gt;</code>设置成你的PDF文件的直链url，这个时候你来一套hexo三件套是没有用的，因为跨域的缘故pdf.js获取不到url指向的PDF文件，所以电脑端和手机端都无法显示。这时候需要添加<code>&lt;head&gt;</code>来允许跨域访问。</p>
+<p>&emsp;&emsp;来到Cloudflare，将自己的域名托管到Cloudflare（如果你已经托管了，那请忽略！！！）</p>
+<p>&emsp;&emsp;进入域名，选择规则，添加一个响应标头转换规则，完成如下配置：</p>
+<p><img src="https://img.wcq060324.xyz/i/2025/02/05/12cspjg.png"></p>
+<p>&emsp;&emsp;其中Access-Control-Allow-Origin的值设置为你博客的域名即可（带上https:&#x2F;&#x2F;或者http:&#x2F;&#x2F;），点击保存后等待一会再次刷新页面后就大功告成了！！！</p>
+<p>&emsp;&emsp;这个时候你会发现电脑端和手机端都可以访问了！！！</p>
+<hr>
+<p>&emsp;&emsp;完结撒花✿✿ヽ(°▽°)ノ✿</p>
+]]></content>
       <categories>
-          
-          <category> 基础化学笔记 2024年 </category>
-          
+        <category>小技术杂谈</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 基础化学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>基础化学-电解质溶液</title>
-      <link href="/posts/24faa819.html"/>
-      <url>/posts/24faa819.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/kyT5/%E7%94%B5%E8%A7%A3%E8%B4%A8%E6%BA%B6%E6%B6%B2.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>Hexo博客</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医学物理-X-ray</title>
+    <url>/posts/2071425241.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/rRi2/X-ray.pdf ' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/12scm7y.jpg" alt="X-ray_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/12sdww7.jpg" alt="X-ray_01"></p>
+]]></content>
       <categories>
-          
-          <category> 基础化学笔记 2024年 </category>
-          
+        <category>医学物理笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 基础化学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>基础化学-理想气体方程和液体气化</title>
-      <link href="/posts/d13e0b26.html"/>
-      <url>/posts/d13e0b26.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/lAUX/%E9%85%8D%E5%90%88%E7%89%A9.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医学物理笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医学物理-光电效应</title>
+    <url>/posts/3727302527.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/w0ty/%E5%85%89%E7%94%B5%E6%95%88%E5%BA%94.pdf ' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/124i6mo.jpg" alt="光电效应_00"></p>
+]]></content>
       <categories>
-          
-          <category> 基础化学笔记 2024年 </category>
-          
+        <category>医学物理笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 基础化学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>基础化学-热力学</title>
-      <link href="/posts/67474cc.html"/>
-      <url>/posts/67474cc.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/gRIG/%E7%83%AD%E5%8A%9B%E5%AD%A6.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医学物理笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医学物理-光的偏振</title>
+    <url>/posts/1908809462.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/qjhX/%E5%85%89%E7%9A%84%E5%81%8F%E6%8C%AF.pdf ' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/12tlpqd.png" alt="光的偏振_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/12tlynw.png" alt="光的偏振_02"></p>
+]]></content>
       <categories>
-          
-          <category> 基础化学笔记 2024年 </category>
-          
+        <category>医学物理笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 基础化学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>基础化学-氧化还原</title>
-      <link href="/posts/3dab57ee.html"/>
-      <url>/posts/3dab57ee.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/0WHm/%E6%B0%A7%E5%8C%96%E8%BF%98%E5%8E%9F.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医学物理笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医学物理-原子核和放射性</title>
+    <url>/posts/4224112327.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/yXCL/%E5%8E%9F%E5%AD%90%E6%A0%B8%E5%92%8C%E6%94%BE%E5%B0%84%E6%80%A7.pdf ' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/03/qkzrl4.jpg" alt="原子核和放射性_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/ql07hd.jpg" alt="原子核和放射性_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/ql0p6r.jpg" alt="原子核和放射性_02"></p>
+]]></content>
       <categories>
-          
-          <category> 基础化学笔记 2024年 </category>
-          
+        <category>医学物理笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 基础化学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>基础化学-分子结构</title>
-      <link href="/posts/3f39e6ab.html"/>
-      <url>/posts/3f39e6ab.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/9VF2/%E5%88%86%E5%AD%90%E7%BB%93%E6%9E%84.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医学物理笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医学物理-声波</title>
+    <url>/posts/3020368477.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/x2ux/%E5%A3%B0%E6%B3%A2.pdf ' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/12unpvn.png" alt="声波_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/12uo2o9.png" alt="声波_01"></p>
+]]></content>
       <categories>
-          
-          <category> 基础化学笔记 2024年 </category>
-          
+        <category>医学物理笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 基础化学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>基础化学-期末复习</title>
-      <link href="/posts/ad41b490.html"/>
-      <url>/posts/ad41b490.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/8QCY/%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医学物理笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医学物理-干涉</title>
+    <url>/posts/3851772144.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/znF4/%E5%B9%B2%E6%B6%89.pdf ' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/03/qm2rja.jpg" alt="干涉_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qm336u.jpg" alt="干涉_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qm39f5.jpg" alt="干涉_02"></p>
+]]></content>
       <categories>
-          
-          <category> 基础化学笔记 2024年 </category>
-          
+        <category>医学物理笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 基础化学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>基础化学-动力学基础</title>
-      <link href="/posts/b18cd37b.html"/>
-      <url>/posts/b18cd37b.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/74uZ/%E5%8A%A8%E5%8A%9B%E5%AD%A6%E5%9F%BA%E7%A1%80.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医学物理笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医学物理-振动</title>
+    <url>/posts/2507111698.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/AQHE/%E6%8C%AF%E5%8A%A8.pdf ' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/03/qnb60b.jpg" alt="振动_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qnb8p0.jpg" alt="振动_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qnbf2i.jpg" alt="振动_02"></p>
+]]></content>
       <categories>
-          
-          <category> 基础化学笔记 2024年 </category>
-          
+        <category>医学物理笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 基础化学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>基础化学-原子结构和元素周期律</title>
-      <link href="/posts/3cfb8cb0.html"/>
-      <url>/posts/3cfb8cb0.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/65ty/%E5%8E%9F%E5%AD%90%E7%BB%93%E6%9E%84%E5%92%8C%E5%85%83%E7%B4%A0%E5%91%A8%E6%9C%9F%E5%BE%8B.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医学物理笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医学物理-期末复习</title>
+    <url>/posts/2207314144.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/B1I8/%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0.pdf ' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/03/qq9ets.jpg" alt="期末复习_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qq9ifx.jpg" alt="期末复习_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qq9o3y.jpg" alt="期末复习_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qq9ntz.jpg" alt="期末复习_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qq9xca.jpg" alt="期末复习_04"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qq9wf1.jpg" alt="期末复习_05"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqa4rs.jpg" alt="期末复习_06"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqabcu.jpg" alt="期末复习_07"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqanq7.jpg" alt="期末复习_08"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqaucw.jpg" alt="期末复习_09"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqb36u.jpg" alt="期末复习_10"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqb28r.jpg" alt="期末复习_11"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqb5v7.jpg" alt="期末复习_12"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqbe29.jpg" alt="期末复习_13"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqbe3g.jpg" alt="期末复习_14"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqbp5j.jpg" alt="期末复习_15"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqbn7c.jpg" alt="期末复习_16"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqbv86.jpg" alt="期末复习_17"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqc1oy.jpg" alt="期末复习_18"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqc1fj.jpg" alt="期末复习_19"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqcapv.jpg" alt="期末复习_20"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqcdki.jpg" alt="期末复习_21"></p>
+]]></content>
       <categories>
-          
-          <category> 基础化学笔记 2024年 </category>
-          
+        <category>医学物理笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 基础化学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>基础化学-基础化学期中考复习</title>
-      <link href="/posts/e8354ece.html"/>
-      <url>/posts/e8354ece.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/5Ds6/%E5%9F%BA%E7%A1%80%E5%8C%96%E5%AD%A6%E6%9C%9F%E4%B8%AD%E8%80%83%E5%A4%8D%E4%B9%A0.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医学物理笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医学物理-波动</title>
+    <url>/posts/1148488344.html</url>
+    <content><![CDATA[<iframe src="/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/DJS3/%E6%B3%A2%E5%8A%A8.pdf " style='width:100%;height:900px' class="pdf-iframe"></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/03/qriaxc.jpg" alt="波动_00"></p>
+]]></content>
       <categories>
-          
-          <category> 基础化学笔记 2024年 </category>
-          
+        <category>医学物理笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 基础化学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>关于Hexo博客预览PDF的方法介绍</title>
-      <link href="/posts/6194ef83.html"/>
-      <url>/posts/6194ef83.html</url>
-      
-        <content type="html"><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>&emsp;&emsp;Hexo博客是通过将Markdown文件渲染成html文件来实现网页的展现的，这也就意味着单单一个PDF文件将难以展示在Hexo博客上。下面将介绍三种方法直接展示PDF文件，分别介绍其优劣之处。可以根据个人的需要来选择PDF的展现方式。</p><h1 id="使用hexo-pdf插件"><a href="#使用hexo-pdf插件" class="headerlink" title="使用hexo-pdf插件"></a>使用hexo-pdf插件</h1><p>&emsp;&emsp;hexo-pdf是hexo博客的一个插件，可以让我们在Markdown文件中直接插入PDF文件。</p><h2 id="安装hexo-pdf插件"><a href="#安装hexo-pdf插件" class="headerlink" title="安装hexo-pdf插件"></a>安装hexo-pdf插件</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">npm install --save hexo-pdf</span></span><br></pre></td></tr></table></figure><h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>&emsp;&emsp;安装完成后，在Markdown文件中合适的地方插入如下代码：</p><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% pdf <span class="language-xml"><span class="tag">&lt;<span class="name">url-to-pdf</span>&gt;</span></span> %&#125;</span><br></pre></td></tr></table></figure><p>&emsp;&emsp;这里的<code>&lt;url-to-pdf&gt;</code>可以是一个url，也可以是本地的指向需要展示的PDF的路径。</p><h2 id="优劣势"><a href="#优劣势" class="headerlink" title="优劣势"></a>优劣势</h2><p>&emsp;&emsp;这种方法的优势在于可以十分方便地插入PDF，但是只在电脑端可以显示，在移动端将是一片透明，无法显示。如果不面对移动端的访问可以忽略此问题，也可以将PDF导出为图片放在下面方便移动端的用户访问。</p><h1 id="使用标签"><a href="#使用标签" class="headerlink" title="使用&lt;iframe&gt;标签"></a>使用<code>&lt;iframe&gt;</code>标签</h1><p>&emsp;&emsp;Markdown和html有着千丝万缕的联系，html的语法在Markdown里也是完全使用的，大多数浏览器也是支持<code>&lt;iframe&gt;</code>标签。所以可以使用<code>&lt;iframe&gt;</code>标签来实现PDF的预览</p><h2 id="使用-1"><a href="#使用-1" class="headerlink" title="使用"></a>使用</h2><p>&emsp;&emsp;Markdown文件中合适的地方插入如下代码：</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">src</span>=<span class="string">&quot;/index.pdf&quot;</span> <span class="attr">width</span>=<span class="string">&quot;100%&quot;</span> <span class="attr">height</span>=<span class="string">&quot;100%&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure><p>&emsp;&emsp;在src的引号里放入PDF文件的url或者路径即可，后面的width和height是预览PDF窗口的大小，可以根据自己的需要更改。建议width保持100%，height在500px到900px选择一个值，平衡电脑端和手机端的预览体验。</p><h2 id="优劣势-1"><a href="#优劣势-1" class="headerlink" title="优劣势"></a>优劣势</h2><p>&emsp;&emsp;非常遗憾，移动端只能显示PDF的第一页，但是电脑端显示正常，是一个完整的PDF预览组件。<br>&emsp;&emsp;如果考虑到移动端用户的体验，除了增加图片的预览，还可以用html语法加入一个现在链接（前提是你有该文件的直链url哦^_^），完整代码如下：</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">src</span>=<span class="string">&quot;/index.pdf&quot;</span> <span class="attr">width</span>=<span class="string">&quot;100%&quot;</span> <span class="attr">height</span>=<span class="string">&quot;100%&quot;</span>&gt;</span></span><br><span class="line">This browser does not support PDFs. Please download the PDF to view it: <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;/index.pdf&quot;</span>&gt;</span>Download PDF<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure><p>&emsp;&emsp;src同上。href里面放入该PDF文件的直链。</p><h1 id="完美的最终解决方案-——-pdf-js"><a href="#完美的最终解决方案-——-pdf-js" class="headerlink" title="完美的最终解决方案 —— pdf.js"></a>完美的最终解决方案 —— pdf.js</h1><h2 id="简介，让我们了解这个了不起的项目吧"><a href="#简介，让我们了解这个了不起的项目吧" class="headerlink" title="简介，让我们了解这个了不起的项目吧"></a>简介，让我们了解这个了不起的项目吧</h2><p>&emsp;&emsp;PDF.js 是一个使用 HTML5 构建的便携式文档格式查看器。<br>&emsp;&emsp;pdf.js 是社区驱动的，并由 Mozilla 支持，目标是为解析和呈现 PDF 创建一个通用的、基于 Web 标准的平台。</p><h2 id="下载并使用"><a href="#下载并使用" class="headerlink" title="下载并使用"></a>下载并使用</h2><h3 id="下载、解压、上传"><a href="#下载、解压、上传" class="headerlink" title="下载、解压、上传"></a>下载、解压、上传</h3><p>&emsp;&emsp;文件的下载可以从pdf.js的官方Github库中下载：<a href="https://github.com/mozilla/pdf.js">https://github.com/mozilla/pdf.js</a>, 可以下载你喜欢的版本，我这里使用的是较老的版本3.4。<br>&emsp;&emsp;下载完后解压并上传到服务器的&#x2F;root&#x2F;blog&#x2F;themes&#x2F;butterfly&#x2F;source&#x2F;js文件夹下，其中“blog”为你hexo博客的根目录，如果你的theme不是Butterfly请将你的theme名称把butterfly更换掉，并将文件夹名称更换为pdfjs（保证下面的代码你可以直接食用O(∩_∩)O哈哈~）</p><h3 id="更改viewer-js文件，防止跨域报错"><a href="#更改viewer-js文件，防止跨域报错" class="headerlink" title="更改viewer.js文件，防止跨域报错"></a>更改viewer.js文件，防止跨域报错</h3><p>&emsp;&emsp;找到位于&#x2F;root&#x2F;blog&#x2F;themes&#x2F;butterfly&#x2F;source&#x2F;js&#x2F;pdfjs&#x2F;web目录下的viewer.js文件，目录更改同上。完成下图所示的更改，将所示代码注释掉！！！</p><p><img src="https://img.wcq060324.xyz/i/2025/02/05/123bvwt.png"></p><h3 id="避免渲染"><a href="#避免渲染" class="headerlink" title="避免渲染"></a>避免渲染</h3><blockquote><p>如果 pdfjs 在 source 文件夹中可能被 Hexo 当成文档渲染出网页，准备当做库使用的文件夹需要告诉 Hexo，让她别当成文档渲染</p></blockquote><p>&emsp;&emsp;在 Hexo 配置文件 <code>_config.yml</code> 中的 <code>skip_render</code> 词条下，把 pdfjs 相对 source 的文件夹路径加入进去</p><figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">skip_render:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">js/**</span></span><br></pre></td></tr></table></figure><h3 id="使用（PDF文件位于本地）"><a href="#使用（PDF文件位于本地）" class="headerlink" title="使用（PDF文件位于本地）"></a>使用（PDF文件位于本地）</h3><p>&emsp;&emsp;在markdown 文档中使用 <code>&lt;iframe&gt;</code> 控件配合pdf.js 库完成pdf 显示</p><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">iframe</span> <span class="attr">src</span>=<span class="string">&#x27;/js/pdfjs/web/viewer.html?file=&lt;src-to-pdf&gt;&#x27;</span> <span class="attr">style</span>=<span class="string">&#x27;width:100%;height:100%&#x27;</span>&gt;</span><span class="tag">&lt;/<span class="name">iframe</span>&gt;</span></span><br></pre></td></tr></table></figure><p>&emsp;&emsp;src中前面那一段为viewer.html相对source文件夹的目录，如果你上面那几步和我完全一样则不用修改，后面的<src-to-pdf>为该PDF文件相对于source文件夹的路径。后面的style则是长宽的设置，完全按照你的喜好设置即可。</p><p>&emsp;&emsp;那如果是url呢？好问题，如果你和我一样把PDF文件存储在我自己搭建的cloudreve网盘里，这时候你会遇到一系列的报错，不同的浏览器报错内容不同，但是大概就是COR的问题，即跨域访问被拒绝的原因。下面介绍如何实现COR使用url来插入PDF！（PS：如果你通过其他方式来获得了PDF文件的直链，我不知道会不会发生和我一样的报错^_^）</p><h3 id="使用url来预览PDF"><a href="#使用url来预览PDF" class="headerlink" title="使用url来预览PDF"></a>使用url来预览PDF</h3><p>&emsp;&emsp;首先你得先将<code>&lt;src-to-pdf&gt;</code>设置成你的PDF文件的直链url，这个时候你来一套hexo三件套是没有用的，因为跨域的缘故pdf.js获取不到url指向的PDF文件，所以电脑端和手机端都无法显示。这时候需要添加<code>&lt;head&gt;</code>来允许跨域访问。</p><p>&emsp;&emsp;来到Cloudflare，将自己的域名托管到Cloudflare（如果你已经托管了，那请忽略！！！）</p><p>&emsp;&emsp;进入域名，选择规则，添加一个响应标头转换规则，完成如下配置：</p><p><img src="https://img.wcq060324.xyz/i/2025/02/05/12cspjg.png"></p><p>&emsp;&emsp;其中Access-Control-Allow-Origin的值设置为你博客的域名即可（带上https:&#x2F;&#x2F;或者http:&#x2F;&#x2F;），点击保存后等待一会再次刷新页面后就大功告成了！！！</p><p>&emsp;&emsp;这个时候你会发现电脑端和手机端都可以访问了！！！</p><hr><p>&emsp;&emsp;完结撒花✿✿ヽ(°▽°)ノ✿</p>]]></content>
-      
-      
+      <tags>
+        <tag>医学物理笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医学物理-流体</title>
+    <url>/posts/1501387983.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/vlsA/%E6%B5%81%E4%BD%93.pdf ' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/03/qspnat.jpg" alt="流体_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qspn2v.jpg" alt="流体_01"></p>
+]]></content>
       <categories>
-          
-          <category> 小技术杂谈 </category>
-          
+        <category>医学物理笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> Hexo博客 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医科数学-随机变量的数字特征</title>
-      <link href="/posts/bf6ce54d.html"/>
-      <url>/posts/bf6ce54d.html</url>
-      
-        <content type="html"><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/YJTA/%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F%E7%9A%84%E6%95%B0%E5%AD%97%E7%89%B9%E5%BE%81.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医学物理笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医学物理-物体的弹性和流体的运动</title>
+    <url>/posts/380306097.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/EGTp/%E7%89%A9%E4%BD%93%E7%9A%84%E5%BC%B9%E6%80%A7%E5%92%8C%E6%B5%81%E4%BD%93%E7%9A%84%E8%BF%90%E5%8A%A8.pdf ' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/03/qttk9r.jpg" alt="物体的弹性和流体的运动_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qtto97.jpg" alt="物体的弹性和流体的运动_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qttqdh.jpg" alt="物体的弹性和流体的运动_02"></p>
+]]></content>
       <categories>
-          
-          <category> 医科数学笔记 2024年 </category>
-          
+        <category>医学物理笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医科数学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医科数学-随机变量</title>
-      <link href="/posts/d1861535.html"/>
-      <url>/posts/d1861535.html</url>
-      
-        <content type="html"><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/ZxUQ/%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医学物理笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医学物理-电场</title>
+    <url>/posts/3727032720.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/GzUA/%E7%94%B5%E5%9C%BA.pdf ' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/03/quhnsk.jpg" alt="电场_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/quhy4w.jpg" alt="电场_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qui5rw.jpg" alt="电场_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qui50t.jpg" alt="电场_03"></p>
+]]></content>
       <categories>
-          
-          <category> 医科数学笔记 2024年 </category>
-          
+        <category>医学物理笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医科数学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医科数学-随机事件及其概率</title>
-      <link href="/posts/3f356889.html"/>
-      <url>/posts/3f356889.html</url>
-      
-        <content type="html"><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/XBSO/%E9%9A%8F%E6%9C%BA%E4%BA%8B%E4%BB%B6%E5%8F%8A%E5%85%B6%E6%A6%82%E7%8E%87.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医学物理笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医学物理-衍射</title>
+    <url>/posts/2340299512.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/KEf4/%E8%A1%8D%E5%B0%84.pdf ' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/03/qvlksn.jpg" alt="衍射_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qvlqmd.jpg" alt="衍射_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qvm2nh.jpg" alt="衍射_02"></p>
+]]></content>
       <categories>
-          
-          <category> 医科数学笔记 2024年 </category>
-          
+        <category>医学物理笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医科数学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医科数学-概率的运行法则</title>
-      <link href="/posts/d977ebab.html"/>
-      <url>/posts/d977ebab.html</url>
-      
-        <content type="html"><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/2Bf8/%E6%A6%82%E7%8E%87%E7%9A%84%E8%BF%90%E7%AE%97%E6%B3%95%E5%88%99.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医学物理笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医学物理-量子力学基础</title>
+    <url>/posts/655307730.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/JWcK/%E9%87%8F%E5%AD%90%E5%8A%9B%E5%AD%A6%E5%9F%BA%E7%A1%80.pdf ' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/03/qvkio2.jpg" alt="量子力学基础_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qvkwnl.jpg" alt="量子力学基础_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qvleiq.jpg" alt="量子力学基础_02"></p>
+]]></content>
       <categories>
-          
-          <category> 医科数学笔记 2024年 </category>
-          
+        <category>医学物理笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医科数学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医科数学-极限</title>
-      <link href="/posts/8223c1cc.html"/>
-      <url>/posts/8223c1cc.html</url>
-      
-        <content type="html"><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/1lcq/%E6%9E%81%E9%99%90.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医学物理笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医科数学-不定积分</title>
+    <url>/posts/822ffb70.html</url>
+    <content><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/Njsj/%E4%B8%8D%E5%AE%9A%E7%A7%AF%E5%88%86.pdf ' style='width:100%;height:900px'></iframe>]]></content>
       <categories>
-          
-          <category> 医科数学笔记 2024年 </category>
-          
+        <category>医科数学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医科数学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医科数学-微分</title>
-      <link href="/posts/93304c2b.html"/>
-      <url>/posts/93304c2b.html</url>
-      
-        <content type="html"><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/W9ID/%E5%BE%AE%E5%88%86.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医科数学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医科数学-初等函数的导数</title>
+    <url>/posts/e2a131e4.html</url>
+    <content><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/P9u3/%E5%88%9D%E7%AD%89%E5%87%BD%E6%95%B0%E7%9A%84%E5%AF%BC%E6%95%B0.pdf ' style='width:100%;height:900px'></iframe>]]></content>
       <categories>
-          
-          <category> 医科数学笔记 2024年 </category>
-          
+        <category>医科数学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医科数学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医科数学-导数的应用</title>
-      <link href="/posts/20e6bd69.html"/>
-      <url>/posts/20e6bd69.html</url>
-      
-        <content type="html"><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/VjHg/%E5%AF%BC%E6%95%B0%E7%9A%84%E5%BA%94%E7%94%A8.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医科数学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医科数学-反常积分</title>
+    <url>/posts/fa2df999.html</url>
+    <content><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/QRCo/%E5%8F%8D%E5%B8%B8%E7%A7%AF%E5%88%86.pdf ' style='width:100%;height:900px'></iframe>]]></content>
       <categories>
-          
-          <category> 医科数学笔记 2024年 </category>
-          
+        <category>医科数学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医科数学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医科数学-定积分的应用</title>
-      <link href="/posts/453a7fc1.html"/>
-      <url>/posts/453a7fc1.html</url>
-      
-        <content type="html"><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/4Oil/%E5%AE%9A%E7%A7%AF%E5%88%86%E7%9A%84%E5%BA%94%E7%94%A8.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医科数学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医科数学-大数定理</title>
+    <url>/posts/694ce0e8.html</url>
+    <content><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/RDF5/%E5%A4%A7%E6%95%B0%E5%AE%9A%E7%90%86.pdf ' style='width:100%;height:900px'></iframe>
+]]></content>
       <categories>
-          
-          <category> 医科数学笔记 2024年 </category>
-          
+        <category>医科数学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医科数学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医科数学-定积分</title>
-      <link href="/posts/1a102f38.html"/>
-      <url>/posts/1a102f38.html</url>
-      
-        <content type="html"><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/38h2/%E5%AE%9A%E7%A7%AF%E5%88%86.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医科数学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医科数学-定积分</title>
+    <url>/posts/1a102f38.html</url>
+    <content><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/38h2/%E5%AE%9A%E7%A7%AF%E5%88%86.pdf ' style='width:100%;height:900px'></iframe>
+]]></content>
       <categories>
-          
-          <category> 医科数学笔记 2024年 </category>
-          
+        <category>医科数学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医科数学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医科数学-大数定理</title>
-      <link href="/posts/694ce0e8.html"/>
-      <url>/posts/694ce0e8.html</url>
-      
-        <content type="html"><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/RDF5/%E5%A4%A7%E6%95%B0%E5%AE%9A%E7%90%86.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医科数学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医科数学-定积分的应用</title>
+    <url>/posts/453a7fc1.html</url>
+    <content><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/4Oil/%E5%AE%9A%E7%A7%AF%E5%88%86%E7%9A%84%E5%BA%94%E7%94%A8.pdf ' style='width:100%;height:900px'></iframe>
+]]></content>
       <categories>
-          
-          <category> 医科数学笔记 2024年 </category>
-          
+        <category>医科数学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医科数学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医科数学-反常积分</title>
-      <link href="/posts/fa2df999.html"/>
-      <url>/posts/fa2df999.html</url>
-      
-        <content type="html"><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/QRCo/%E5%8F%8D%E5%B8%B8%E7%A7%AF%E5%88%86.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医科数学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医科数学-导数的应用</title>
+    <url>/posts/20e6bd69.html</url>
+    <content><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/VjHg/%E5%AF%BC%E6%95%B0%E7%9A%84%E5%BA%94%E7%94%A8.pdf ' style='width:100%;height:900px'></iframe>
+]]></content>
       <categories>
-          
-          <category> 医科数学笔记 2024年 </category>
-          
+        <category>医科数学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医科数学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医科数学-初等函数的导数</title>
-      <link href="/posts/e2a131e4.html"/>
-      <url>/posts/e2a131e4.html</url>
-      
-        <content type="html"><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/P9u3/%E5%88%9D%E7%AD%89%E5%87%BD%E6%95%B0%E7%9A%84%E5%AF%BC%E6%95%B0.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医科数学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医科数学-微分</title>
+    <url>/posts/93304c2b.html</url>
+    <content><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/W9ID/%E5%BE%AE%E5%88%86.pdf ' style='width:100%;height:900px'></iframe>
+]]></content>
       <categories>
-          
-          <category> 医科数学笔记 2024年 </category>
-          
+        <category>医科数学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医科数学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医科数学-期中复习</title>
-      <link href="/posts/aea02b4a.html"/>
-      <url>/posts/aea02b4a.html</url>
-      
-        <content type="html"><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/Ootv/%E4%B8%AD%E6%9C%9F%E5%A4%8D%E4%B9%A0.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医科数学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医科数学-期中复习</title>
+    <url>/posts/aea02b4a.html</url>
+    <content><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/Ootv/%E4%B8%AD%E6%9C%9F%E5%A4%8D%E4%B9%A0.pdf ' style='width:100%;height:900px'></iframe>]]></content>
       <categories>
-          
-          <category> 医科数学笔记 2024年 </category>
-          
+        <category>医科数学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医科数学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医科数学-不定积分</title>
-      <link href="/posts/822ffb70.html"/>
-      <url>/posts/822ffb70.html</url>
-      
-        <content type="html"><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/Njsj/%E4%B8%8D%E5%AE%9A%E7%A7%AF%E5%88%86.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医科数学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医科数学-极限</title>
+    <url>/posts/8223c1cc.html</url>
+    <content><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/1lcq/%E6%9E%81%E9%99%90.pdf ' style='width:100%;height:900px'></iframe>
+]]></content>
       <categories>
-          
-          <category> 医科数学笔记 2024年 </category>
-          
+        <category>医科数学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医科数学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>概率统计在医学研究中的应用</title>
-      <link href="/posts/6c369809.html"/>
-      <url>/posts/6c369809.html</url>
-      
-        <content type="html"><![CDATA[<h1 id="由于Markdown文件的排版限制，只展示PDF版，请见谅。"><a href="#由于Markdown文件的排版限制，只展示PDF版，请见谅。" class="headerlink" title="由于Markdown文件的排版限制，只展示PDF版，请见谅。"></a>由于Markdown文件的排版限制，只展示PDF版，请见谅。</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/MXiz/%E6%A6%82%E7%8E%87%E7%BB%9F%E8%AE%A1%E5%9C%A8%E5%8C%BB%E5%AD%A6%E7%A0%94%E7%A9%B6%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医科数学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医科数学-概率的运行法则</title>
+    <url>/posts/d977ebab.html</url>
+    <content><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/2Bf8/%E6%A6%82%E7%8E%87%E7%9A%84%E8%BF%90%E7%AE%97%E6%B3%95%E5%88%99.pdf ' style='width:100%;height:900px'></iframe>
+]]></content>
       <categories>
-          
-          <category> 论文集合 </category>
-          
+        <category>医科数学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 袖珍论文 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>LLM对如今医师诊断的作用与影响</title>
-      <link href="/posts/8307c908.html"/>
-      <url>/posts/8307c908.html</url>
-      
-        <content type="html"><![CDATA[<h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>        2020年，OpenAI发布了ChatGPT-3，这犹如一记惊雷引来了全世界的目光，它对自然语言的处理远远超乎人们的想象，ChatGPT-3不仅在文本生成方面表现出色，还展示了在小说创作、诗歌编写、代码生成等多个领域的惊人能力。</p><p>        所谓的LLM和GPT，分别指大型语言模型和生成式预训练变换器。大语言模型，是由具有大量参数（通常数十亿个权重或更多）的人工神经网络组成的一类语言模型，使用自监督学习或半监督学习对大量未标记文本进行训练。而GPT则是LLM的一种，是也是生成式人工智能的重要框架。</p><p>        在临床医学导论课程的学习中，也有专门一节课为“大数据AI时代的医学与医疗服务趋势与思考”，令我印象深刻，课上列举的数据虽然具体数值已经模糊，但是依旧令我难忘。从住院医到主治医师再到副主任医师，其初诊的诊断正确率大概从30%到60%再到80%，但是一个训练好的LLM可以用更短的时间里做出几乎和副主任医师差不多正确率的诊断，令人吃惊。</p><p>        与此同时，AI的技术依旧在不断进步。2024年，OpenAI发布了o1模型，世界上首款具有COT（思维链）的LLM问世，它在逻辑思维能力上再一次打破了人们对AI能力上限的认知。之后，Deepseek、Google、Kimi等公司接续发布具有COT的LLM。尚且不具有COT的LLM便可达到如此精准的判断，那具有COT的LLM在诊断方面大概率会更上一层楼。</p><p>        因此，作为一个AI爱好者，再加上对AI辅助诊断的好奇与希冀，我开始对LLM（大语言模型）对如今医师诊断的作用与影响展开了研究。</p><h1 id="二、亲身测试，从影像学出发"><a href="#二、亲身测试，从影像学出发" class="headerlink" title="二、亲身测试，从影像学出发"></a>二、亲身测试，从影像学出发</h1><p>        首先测试 AI 在医学影像诊断学的诊断正确率，一共测试五题，使用没有 COT 的ChatGPT-4o 模型。题目来源为知乎。</p><p>        1.一青年男性，往有咳嗽、咳痰史，近日受凉后，咳嗽、咳痰加重，时有咯血。X 线片示左肺下野内中带肺纹理增多、紊乱，边缘模糊，其中夹杂大小不等的囊状影，有的囊内有液平。最可能的诊断是（），正确答案 C</p><p>        A、左肺支气管炎         B、左肺继发性肺结核        C、左肺支气管扩张</p><p>        D、左肺下叶肺炎吸收消散期        E、左肺脓肿形成期</p><p><img src="https://img.wcq060324.xyz/i/2025/02/04/krd1b3.jpg" alt="图片5"></p><p>        2. 男性，23岁，低热，右胸疼痛，活动后气促，胸片上：右肺下野有大片致密阴影，上缘呈外高内的弧线状，该侧肋隔角，横隔被遮盖，应诊断为（）正确答案:C</p><p>        A、右下肺大叶性肺炎      B、右下肺不张            C、右侧游离性胸腔积液</p><p>        D、右下肺脓疡           E、右肺下积液</p><p><img src="https://img.wcq060324.xyz/i/2025/02/04/km3tn7.jpg" alt="图片1"></p><p>        3. 一中年女性，5年前行胃部手术，病史不详，最近感全身乏力，偶有咳嗽，无咳血，胸片示两中下肺野多发结节影，密度较淡似棉花团样，应首先考虑以下哪项诊断（）正确答案：D</p><p>        A、亚急性血行播散型肺结核           B、两下肺支气管肺炎</p><p>        C、弥漫性原发肺癌           D、两肺多发转移瘤、肺泡癌</p><p><img src="https://img.wcq060324.xyz/i/2025/02/04/kn8vgy.jpg" alt="图片2"></p><p>        4.男性，40岁，体检发现右肺中野有一小块阴影约2CM大小，轮廓呈分叶状，边缘有短细毛刺，其中可见空泡征。应首先考虑以下哪项诊断（）正确答案：A</p><p>        A、早期周围型肺癌                   B、结核瘤</p><p>        C、炎性假瘤                        D、肺炎                  E、错构瘤</p><p><img src="https://img.wcq060324.xyz/i/2025/02/04/knvaod.jpg" alt="图片3"></p><p>        5. 50岁，男性，发热咳嗽，右肺中叶有点片状阴影，边缘模糊，密度不均匀，经抗炎治疗后复查，该影在同一部位反复出现，应考虑为（）正确答案：C</p><p>        A、病毒性肺炎                 B、干酪性肺炎</p><p>        C、阻塞性肺炎                 D、支原体肺炎             E、过敏性肺炎</p><p><img src="https://img.wcq060324.xyz/i/2025/02/04/kovtvj.jpg" alt="图片4"></p><p>        在每一道题之后的图片左侧的输入为完整的题目（包含选项），而右侧的图片为输入完整题干（不包括选项）让 ChatGPT-4o 自行做出诊断。</p><p>        经过这五道题的测试可见，如果将影像学的具体症状用文字的形式提交给 ChatGPT-4o模型的话，即使没有 COT 即没有所谓的“思考能力”和“逻辑推理能力”的情况下，依旧能够精准的给出正确的选择，做出正确的诊断，并且可以给出具体的分析，甚至对每一个选项都进行影像学特征上的分析。对于直接输入症状的情况，除了个别题目（如 T5）ChatGPT-4o 给出了多种可能性，其余都精准的给出了患者所患有的病症，与此同时在 T5的回答中第二项即为正确答案。</p><p>        虽然用到的题目比较少，但是可以预见的是在临床实践的过程中，在已经获取影像学上的准确描述的情况下，即使不存在选项，LLM（ChatGPT-4o）是可以以接近100%的概率做出正确的诊断的，在有选项的情况下，即在专业医师已经缩小可能范围的情形下，LLM（ChatGPT-4o）给出正确答案的概率还会进一步提高。同时，毋庸置疑的是，在这种需要一定知识和逻辑相结合的场景中，拥有COT的ChatGPT-o1模型或者ChatGPT-o1-mini模型会有更好的表现，面对更加复杂和多情况的病例中也会有更准确的诊断。但由于ChatGPT-4o在没有COT的条件下就已经非常完美的完成了病症的诊断，所以现有条件下无法亲自测试有无COT对诊断成功率的影响。</p><p>        为了进一步测试AI的诊断能力，我于互联网上找到了“肺部结节病2例CT影像分析”的文章，选择了其中一种胸部CT影像测试ChatGPT和Google Gemini两种模型，下面即为影像图片（图像以及诊断网址为<a href="https://www.yxppt.com/archives/190418">https://www.yxppt.com/archives/190418</a> ）：</p><p><img src="https://img.wcq060324.xyz/i/2025/02/04/kts2gu.jpg" alt="图片6"></p><p>        下面是原文对该名患者的描述：</p><p><img src="https://img.wcq060324.xyz/i/2025/02/04/li4tf2.png" alt="图片7"></p><p>        非常遗憾，在春节期间火遍全球的Deepseek模型在这方面显得有些捉襟见肘，因为在Deepseek模型中即使选用最新的R1模型识别图片只能识别文字，没有文字的图片无法输入，所以下面分别测试ChatGPT4o和o1模型和Gemini 2.0 Flash Experimental、Gemini 2.0 FlashThinking Experimental01-21模型。</p><p>        值得注意的是，ChatGPT-4o和Gemini 2.0 Flash Experimental模型均为快速思考，不具有思维链，而ChatGPT-o1和Gemini 2.0 FlashThinking Experimental01-21模型具有思维链，并且Gemini 2.0 Flash Experimental和Gemini 2.0 FlashThinking Experimental01-21模型尚且未正式发布，测试均在AI Studio上进行。（测试时间为2025.1.31，版本号分别为gemini-2.0-flash-exp和gemini-2.0-flash-thinking-exp-01-21）</p><h2 id="①下面用ChatGPT-4o模型进行测试，摘录其回答（该模型无COT）："><a href="#①下面用ChatGPT-4o模型进行测试，摘录其回答（该模型无COT）：" class="headerlink" title="①下面用ChatGPT-4o模型进行测试，摘录其回答（该模型无COT）："></a>①下面用ChatGPT-4o模型进行测试，摘录其回答（该模型无COT）：</h2><p><img src="https://img.wcq060324.xyz/i/2025/02/04/ljs7o5.png" alt="图片8"></p><h2 id="②下面用Gemini-2-0-Flash-Experimental模型进行测试，摘录其回答（该模型无COT，续图在下一页）："><a href="#②下面用Gemini-2-0-Flash-Experimental模型进行测试，摘录其回答（该模型无COT，续图在下一页）：" class="headerlink" title="②下面用Gemini 2.0 Flash Experimental模型进行测试，摘录其回答（该模型无COT，续图在下一页）："></a>②下面用Gemini 2.0 Flash Experimental模型进行测试，摘录其回答（该模型无COT，续图在下一页）：</h2><p><img src="https://img.wcq060324.xyz/i/2025/02/04/ljsg2u.png" alt="图片9"></p><h2 id="③下面用ChatGPT-o1模型进行测试，摘录其回答（该模型有COT）："><a href="#③下面用ChatGPT-o1模型进行测试，摘录其回答（该模型有COT）：" class="headerlink" title="③下面用ChatGPT-o1模型进行测试，摘录其回答（该模型有COT）："></a>③下面用ChatGPT-o1模型进行测试，摘录其回答（该模型有COT）：</h2><p><img src="https://img.wcq060324.xyz/i/2025/02/04/ljsrpe.png" alt="图片10"></p><h2 id="④下面用Gemini-2-0-FlashThinking-Experimental01-21模型进行测试，摘录其回答（该模型有COT）："><a href="#④下面用Gemini-2-0-FlashThinking-Experimental01-21模型进行测试，摘录其回答（该模型有COT）：" class="headerlink" title="④下面用Gemini 2.0 FlashThinking Experimental01-21模型进行测试，摘录其回答（该模型有COT）："></a>④下面用Gemini 2.0 FlashThinking Experimental01-21模型进行测试，摘录其回答（该模型有COT）：</h2><p> <img src="https://img.wcq060324.xyz/i/2025/02/04/ljsu8k.png" alt="图片11"><br> 在该网站上，其诊断如下：<br><img src="https://img.wcq060324.xyz/i/2025/02/04/lllgs5.png" alt="图片12"><br>&emsp;&emsp;四种模型相对比可以清晰的看到，拥有COT（思维链）的ChatGPT-o1和Gemini 2.0 FlashThinking Experimental01-21模型更加准确地诊断出该患者最可能患有结节病，同时结核病也有很大的可能性，这与文章中做出的诊断极度吻合，并且给出了解释，并且还指出了其他的可能性，也与原文指出的可能性基本吻合。非常遗憾的是没有COT的ChatGPT-4o模型给出了结节病的可能性选项，但其他常见的选项并没有涉及，即忽略了其他高可能性的选项。对于同样没有思维链的Gemini 2.0 Flash Experimental模型虽然也指出了患有结节病和肺结核的可能性，但是给出的选项太多了，过于宽泛，对于缩小可能性的范围具有一定的帮助，但是并没有像具有COT的模型那么精确。<br>&emsp;&emsp;不可忽略的是直接通过CT影像来诊断疾病比之前的直接输入对CT影像的描述的难度可以说是指数级的上升，涉及到对多模态的识别，即对图像的识别以及分析，这对逻辑分析能力会有更高的要求，因此拥有COT的AGI模型的表现也要远远好于不具有COT的AGI模型，诊断也十分准确，具有很高的参考价值。如果医生有一个预先的判断再修改prompt对范围加以限定，相信LLM给出的诊断会更加的准确。<br>&emsp;&emsp;当然，这是ChatGPT系列和Google系列模型的运行结果，它是一个综合性的LLM，即AGI（通用人工智能），对于专门服务于医疗行业的LLM，用于训练的数据均于医学相关，相信准确率会进一步提高，对于实践将更有参考价值。</p><h1 id="三、从文献中的实验窥探一隅"><a href="#三、从文献中的实验窥探一隅" class="headerlink" title="三、从文献中的实验窥探一隅"></a>三、从文献中的实验窥探一隅</h1><p>        通过PubMed搜索，我找到了一篇名为《AI-Driven Diagnostic Assistance in Medical Inquiry: Reinforcement Learning Algorithm Development and Validation》的文章，下面为部分原文的翻译以及我的总结概括。（Zou, Xuan et al. “AI-Driven Diagnostic Assistance in Medical Inquiry: Reinforcement Learning Algorithm Development and Validation.” Journal of medical Internet research vol. 26 e54616. 23 Aug. 2024, doi:10.2196&#x2F;54616）        </p><p>        在这篇文章中，科研人员使用一种医疗强化学习查询助手，MedRIA，将查询分为4个阶段：询问症状和病史、进行体格检查（PE）、请求辅助检查（AE）以及以诊断结束查询。MedRIA根据患者特定情况调整查询策略的能力使其成为医疗资源受限地区或人群的有希望的解决方案。</p><p>        中国广东省深圳市疾病预防控制中心收集了来自深圳市 76 家医院的去标识化门诊电子病历。研究人员选择了 2021 年 7 月至 2021 年 11 月急诊科和儿科的记录。如下图所示，这些记录包含非结构化文本信息和结构化实验室测试结果，这些信息使用自然语言处理技术进行了特征提取和标准化。下图提供了一个已处理的EHR例。</p><p> <img src="https://img.wcq060324.xyz/i/2025/02/04/lmzlvd.png" alt="图片13"><br> &emsp;&emsp;为了衡量 MedRIA 的查询与医生进行的查询之间的一致性，研究人员引入了 3 个函数：MSMH(st)、MPE(st) 和 MAE(st)。这些函数量化了医生在当前状态 st 中已询问但 MedRIA 尚未调查的特征数量。具体来说，MSMH(st)、MPE(st) 和 MAE(st) 分别量化了 SMH（症状和病史）特征、PE（体格检查）特征和 AE（辅助检查）特征的数量。在计算 MAE(st) 时，一个实验室测试中的所有特征被视为一个单元。本质上，MAE(st) 计算的是医生在当前状态 st 中已推荐但 MedRIA 遗漏的 AE 数量。相应地，当 MedRIA 选择与 AE 相关的特征时，表明 MedRIA 已推荐了整个检查。<br> &emsp;&emsp;研究人员进行模型建立、数据分析后得出数据结论：“这项研究专注于在急诊科和儿科进行的 2 项回顾性询问和诊断任务。急诊科提供了339,020次咨询记录主要涉及患有各种上呼吸道感染的儿童（中位年龄5.2岁，四分位距 IQR 2.6-26.1岁），其中上呼吸道感染占比73.93% (250,638&#x2F;339,020)。儿科提供了561,659次咨询，记录，主要涉及患有各种上呼吸道感染的儿童（中位年龄 3.8 岁，四分位距 IQR 2.0-5.7 岁），其中上呼吸道感染占比 88.73% (498,408&#x2F;561,659)。在这两种情况下，当 AI 模型进行独立询问时，都表现出较高的诊断性能，受试者工作特征曲线下面积分别为 0.955（95% CI 0.953-0.956）和 0.943（95% CI 0.941-0.944）。当 AI 模型用于与医生进行模拟协作时，它显著减少了医生平均询问次数，分别降至 46%(6.037&#x2F;13.26; 95% CI 6.009-6.064)和43%(6.245&#x2F;14.364; 95% CI 6.225-6.269)同时在这两种场景下，受试者工作特征曲线下面积分别达到 0.972 (95% CI 0.970-0.973)和0.968(95% CI 0.967-0.969)。外部验证显示，标准化的 Kendallτ距离为 0.323 (95% CI 0.301-0.346)，表明 AI 模型与医生的询问一致性”，进而得出结论：“人工智能驱动的诊断助手在独立使用和与临床医生模拟协作中都具有较高的诊断性能。研究发现，其调查过程与临床医生的医疗调查逻辑一致。这些发现突出了诊断助手在协助医疗保健专业人员决策过程中的潜力”。</p><p><img src="https://img.wcq060324.xyz/i/2025/02/04/lo62au.png" alt="图片14"></p><h1 id="四、总结"><a href="#四、总结" class="headerlink" title="四、总结"></a>四、总结</h1><p>        无论是我使用ChatGPT系列模型和Google系列模型两个AGI（综合模型）在影像学方面的测试还是在《AI-Driven Diagnostic<br>Assistance in Medical Inquiry: Reinforcement Learning Algorithm Development and<br>Validation》一文中对医疗强化学习查询助手（MedRIA），都对医学诊断有非常重要的帮助作用。而且在AI版本的迭代中，LLM所具有的多模态识别能力、逻辑推理能力、文本处理能力会越来越强，所积累的大数据也会越来越大，这也意味着LLM对疾病的诊断的精准度也会越来越高，甚至于超越一位专家级别的医生的诊断——人在判断时会受到很多因素的影响，但对于LLM而言，它们只会选择概率最大的那个来提高诊断的正确率，或是给出几个最可能的选项来辅助医生的诊断。</p><p>        但是这就意味着不在需要人类医师坐诊看病了吗？</p><p>        我认为不是的。充其量LLM只能作为一种辅助医生诊断的一种工具用来提高诊断正确率。一位患者去看病，重要的不仅仅是把他得了什么病给准确的判断出来，与医生面对面所带来的安全感、亲切感以及随之所带来的人文关怀也是看病过程中必不可少的东西。试想一下，如果LLM真的完全取代了人类医师，你每次看病的时候都是一个冷冰冰的屏幕对着你，你输入你的症状之后屏幕上弹出你最可能患有的疾病，你是一种什么感觉？你会完全信任那个LLM吗？答案大概率是否定的。但是，如果是一位医生热情亲切地询问了你的症状后，配合LLM的诊断后对你提出一个极有可能是正确的诊断，这次你会相信吗？我想答案是肯定的。这才是我认为的LLM，也就是AI带给医生，带给医疗行业，带给这个时代的意义，而并非取代人类。</p><h1 id="五、附件"><a href="#五、附件" class="headerlink" title="五、附件"></a>五、附件</h1><p>        最后，为了读者可以阅读到格式不会发生变化的文章，最后附上PDF版文件，上文由该PDF文件更改而来，排版略有不同之处还请谅解。</p><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/L1hQ/LLM%EF%BC%88%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B%EF%BC%89%E5%AF%B9%E5%A6%82%E4%BB%8A%E5%8C%BB%E5%B8%88%E8%AF%8A%E6%96%AD%E7%9A%84%E4%BD%9C%E7%94%A8%E4%B8%8E%E5%BD%B1%E5%93%8D.pdf ' style='width:100%;height:900px'></iframe>]]></content>
-      
-      
+      <tags>
+        <tag>医科数学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医科数学-随机事件及其概率</title>
+    <url>/posts/3f356889.html</url>
+    <content><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/XBSO/%E9%9A%8F%E6%9C%BA%E4%BA%8B%E4%BB%B6%E5%8F%8A%E5%85%B6%E6%A6%82%E7%8E%87.pdf ' style='width:100%;height:900px'></iframe>
+]]></content>
       <categories>
-          
-          <category> 论文集合 </category>
-          
+        <category>医科数学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 袖珍论文 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医学物理-量子力学基础</title>
-      <link href="/posts/655307730.html"/>
-      <url>/posts/655307730.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/JWcK/%E9%87%8F%E5%AD%90%E5%8A%9B%E5%AD%A6%E5%9F%BA%E7%A1%80.pdf ' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/03/qvkio2.jpg" alt="量子力学基础_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qvkwnl.jpg" alt="量子力学基础_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qvleiq.jpg" alt="量子力学基础_02"></p>]]></content>
-      
-      
+      <tags>
+        <tag>医科数学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医科数学-随机变量</title>
+    <url>/posts/d1861535.html</url>
+    <content><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/ZxUQ/%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F.pdf ' style='width:100%;height:900px'></iframe>
+]]></content>
       <categories>
-          
-          <category> 医学物理笔记 2024年 </category>
-          
+        <category>医科数学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医学物理笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医学物理-衍射</title>
-      <link href="/posts/2340299512.html"/>
-      <url>/posts/2340299512.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/KEf4/%E8%A1%8D%E5%B0%84.pdf ' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/03/qvlksn.jpg" alt="衍射_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qvlqmd.jpg" alt="衍射_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qvm2nh.jpg" alt="衍射_02"></p>]]></content>
-      
-      
+      <tags>
+        <tag>医科数学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>医科数学-随机变量的数字特征</title>
+    <url>/posts/bf6ce54d.html</url>
+    <content><![CDATA[<h1 id="PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！"><a href="#PS：2025-2-5后的文章支持移动端预览PDF，故不提供图片版预览！！！" class="headerlink" title="PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！"></a>PS：2025.2.5后的文章支持移动端预览PDF，故不提供图片版预览！！！</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/YJTA/%E9%9A%8F%E6%9C%BA%E5%8F%98%E9%87%8F%E7%9A%84%E6%95%B0%E5%AD%97%E7%89%B9%E5%BE%81.pdf ' style='width:100%;height:900px'></iframe>
+]]></content>
       <categories>
-          
-          <category> 医学物理笔记 2024年 </category>
-          
+        <category>医科数学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医学物理笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医学物理-电场</title>
-      <link href="/posts/3727032720.html"/>
-      <url>/posts/3727032720.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/GzUA/%E7%94%B5%E5%9C%BA.pdf ' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/03/quhnsk.jpg" alt="电场_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/quhy4w.jpg" alt="电场_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qui5rw.jpg" alt="电场_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qui50t.jpg" alt="电场_03"></p>]]></content>
-      
-      
+      <tags>
+        <tag>医科数学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>哪吒探针部署教程</title>
+    <url>/posts/538270049.html</url>
+    <content><![CDATA[<hr>
+<h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>哪吒探针已经迎来了最新的V1版本，相对比与V0版本，有很大的不同，界面变得更加美观，也提供了一些便利，只需要一个域名就可以完成部署。我们需要准备一个作为Dashboard的服务器，一个解析到该服务器的域名即可，当然，还有你需要监控的小鸡啦。</p>
+<h1 id="二、完成docker和docker-compose的安装"><a href="#二、完成docker和docker-compose的安装" class="headerlink" title="二、完成docker和docker-compose的安装"></a>二、完成docker和docker-compose的安装</h1><h2 id="docker的安装"><a href="#docker的安装" class="headerlink" title="docker的安装"></a>docker的安装</h2><p>我们先对系统进行更新：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt upgrade</span><br><span class="line">sudo apt full-upgrade</span><br></pre></td></tr></table></figure>
+
+<p>Docker在Ubuntu上依赖一些软件包。执行以下命令来安装这些依赖：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install ca-certificates curl gnupg lsb-release</span><br></pre></td></tr></table></figure>
+
+<p>执行以下命令来添加Docker官方的GPG密钥：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -</span><br></pre></td></tr></table></figure>
+
+<p>执行以下命令来添加Docker的软件源：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo add-apt-repository &quot;deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable&quot;</span><br></pre></td></tr></table></figure>
+
+<p>执行以下命令来安装Docker：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install docker-ce docker-ce-cli containerd.io</span><br></pre></td></tr></table></figure>
+
+<p>启动docker：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo systemctl start docker</span><br><span class="line">sudo systemctl status docker</span><br><span class="line">sudo systemctl enable docker</span><br></pre></td></tr></table></figure>
+
+<h2 id="docker-compose的安装"><a href="#docker-compose的安装" class="headerlink" title="docker-compose的安装"></a>docker-compose的安装</h2><p>执行下面的命令：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo curl -SL \</span><br><span class="line">https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-linux-x86_64 \</span><br><span class="line">-o /usr/local/bin/docker-compose</span><br></pre></td></tr></table></figure>
+
+<h1 id="三、解析域名并设置反向代理"><a href="#三、解析域名并设置反向代理" class="headerlink" title="三、解析域名并设置反向代理"></a>三、解析域名并设置反向代理</h1><h2 id="解析域名"><a href="#解析域名" class="headerlink" title="解析域名"></a>解析域名</h2><p>我是在阿里云上购买了一个域名然后托管到Cloudflare上，在Cloudflare的控制面板上进行DNS解释设置，你可以选择其他方式进行域名的解析。</p>
+<p><img src="https://www.helloimg.com/i/2025/02/01/679dc780ec952.png" alt="域名解析"></p>
+<p>如上图所示，添加一个A Mark。名称你可以不填，也可以按照自己的喜好设置一个二级域名，同时地址填写你作为Dashboard的服务器的ipv4地址。如果你只有ipv6地址，则需添加AAAA Mark。记得关闭小云朵（代理），其他不用更改，点击保存。这样域名解析就完毕了，你可以打开cmd，ping一下你的网址，如果ping通了，则表示解析已完成，可以进行下一步了。</p>
+<h2 id="设置反向代理"><a href="#设置反向代理" class="headerlink" title="设置反向代理"></a>设置反向代理</h2><p>设置完反向代理后就不用以域名：端口的形式访问，可以直接使用域名进行访问。这里使用由一点科技提供的一键脚本，可以同时进行反向代理和证书申请。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">wget -O manage_nginx.sh &quot;https://raw.githubusercontent.com/1keji/AddIPv6/main/manage_nginx.sh&quot; &amp;&amp; chmod +x manage_nginx.sh &amp;&amp; ./manage_nginx.sh</span><br></pre></td></tr></table></figure>
+
+<p>选择1.安装Nginx，输入你的真实的邮箱地址，再将你解析好的域名填入，最后将反向代理的目标地址设置为本机地址的8008端口，即<a href="http://127.0.0.1:8008。">http://127.0.0.1:8008。</a></p>
+<p>完成后就可以用域名来访问啦！！！</p>
+<h1 id="安装哪吒面板"><a href="#安装哪吒面板" class="headerlink" title="安装哪吒面板"></a>安装哪吒面板</h1><p>访问哪吒官网（ <a href="https://nezha.wiki/guide/dashboard.html">https://nezha.wiki/guide/dashboard.html</a> ），执行官方提供的安装脚本。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">curl -L https://raw.githubusercontent.com/nezhahq/scripts/refs/heads/main/install.sh -o nezha.sh &amp;&amp; chmod +x nezha.sh &amp;&amp; sudo ./nezha.sh</span><br></pre></td></tr></table></figure>
+
+<p>会出现如下页面：</p>
+<p><img src="https://www.helloimg.com/i/2025/02/01/679dc64965560.png" alt="面板安装"></p>
+<p>然后选择1.docker安装，再选择1.安装面板端。</p>
+<p>其中访问端口无需改变，地址填写上面你解析好的域名，站点名称可以自定义。</p>
+<p>安装完成后就可以在浏览器里输入你的域名来进行访问啦！你可以登录后台进行你想要的设置，例如改变主题，设置密码，改变用户名等，这里不加赘述。</p>
+<h1 id="安装agent端"><a href="#安装agent端" class="headerlink" title="安装agent端"></a>安装agent端</h1><p>登录到面板的后台，由如下界面：</p>
+<p><img src="https://www.helloimg.com/i/2025/02/01/679dca282f583.png" alt="agent安装"></p>
+<p>找到右上角的“安装命令”，选择适合你的安装脚本，在你需要监控的小鸡上运行，看到installed successfully即可。在下面的服务器列表就可以看到你的服务器了。可以选择修改该服务器的名称，添加备注等，不加以赘述。</p>
+<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>这种安装方式有一个缺陷，就是如果你的域名打开了小云朵（Cloudflare）的代理，就会出现添加Agent端的时候再网页上并不会显示。这个问题有解决方案，将在后面的文章中解决。当然最直接最简单的方式就是在添加Agent端的时候关闭代理，所有服务器都挂上探针了之后再打开小云朵，这样不会出现任何问题。(#^.^#)</p>
+]]></content>
       <categories>
-          
-          <category> 医学物理笔记 2024年 </category>
-          
+        <category>小技术杂谈</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医学物理笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医学物理-物体的弹性和流体的运动</title>
-      <link href="/posts/380306097.html"/>
-      <url>/posts/380306097.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/EGTp/%E7%89%A9%E4%BD%93%E7%9A%84%E5%BC%B9%E6%80%A7%E5%92%8C%E6%B5%81%E4%BD%93%E7%9A%84%E8%BF%90%E5%8A%A8.pdf ' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/03/qttk9r.jpg" alt="物体的弹性和流体的运动_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qtto97.jpg" alt="物体的弹性和流体的运动_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qttqdh.jpg" alt="物体的弹性和流体的运动_02"></p>]]></content>
-      
-      
+      <tags>
+        <tag>哪吒探针</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>基础化学-分子结构</title>
+    <url>/posts/3f39e6ab.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/9VF2/%E5%88%86%E5%AD%90%E7%BB%93%E6%9E%84.pdf ' style='width:100%;height:900px'></iframe>
+]]></content>
       <categories>
-          
-          <category> 医学物理笔记 2024年 </category>
-          
+        <category>基础化学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医学物理笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医学物理-流体</title>
-      <link href="/posts/1501387983.html"/>
-      <url>/posts/1501387983.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/vlsA/%E6%B5%81%E4%BD%93.pdf ' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/03/qspnat.jpg" alt="流体_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qspn2v.jpg" alt="流体_01"></p>]]></content>
-      
-      
+      <tags>
+        <tag>基础化学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>基础化学-动力学基础</title>
+    <url>/posts/b18cd37b.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/74uZ/%E5%8A%A8%E5%8A%9B%E5%AD%A6%E5%9F%BA%E7%A1%80.pdf ' style='width:100%;height:900px'></iframe>
+]]></content>
       <categories>
-          
-          <category> 医学物理笔记 2024年 </category>
-          
+        <category>基础化学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医学物理笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医学物理-波动</title>
-      <link href="/posts/1148488344.html"/>
-      <url>/posts/1148488344.html</url>
-      
-        <content type="html"><![CDATA[<iframe src="/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/DJS3/%E6%B3%A2%E5%8A%A8.pdf " style='width:100%;height:900px' class="pdf-iframe"></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/03/qriaxc.jpg" alt="波动_00"></p>]]></content>
-      
-      
+      <tags>
+        <tag>基础化学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>基础化学-原子结构和元素周期律</title>
+    <url>/posts/3cfb8cb0.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/65ty/%E5%8E%9F%E5%AD%90%E7%BB%93%E6%9E%84%E5%92%8C%E5%85%83%E7%B4%A0%E5%91%A8%E6%9C%9F%E5%BE%8B.pdf ' style='width:100%;height:900px'></iframe>
+]]></content>
       <categories>
-          
-          <category> 医学物理笔记 2024年 </category>
-          
+        <category>基础化学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医学物理笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医学物理-期末复习</title>
-      <link href="/posts/2207314144.html"/>
-      <url>/posts/2207314144.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/B1I8/%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0.pdf ' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/03/qq9ets.jpg" alt="期末复习_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qq9ifx.jpg" alt="期末复习_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qq9o3y.jpg" alt="期末复习_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qq9ntz.jpg" alt="期末复习_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qq9xca.jpg" alt="期末复习_04"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qq9wf1.jpg" alt="期末复习_05"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqa4rs.jpg" alt="期末复习_06"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqabcu.jpg" alt="期末复习_07"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqanq7.jpg" alt="期末复习_08"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqaucw.jpg" alt="期末复习_09"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqb36u.jpg" alt="期末复习_10"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqb28r.jpg" alt="期末复习_11"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqb5v7.jpg" alt="期末复习_12"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqbe29.jpg" alt="期末复习_13"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqbe3g.jpg" alt="期末复习_14"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqbp5j.jpg" alt="期末复习_15"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqbn7c.jpg" alt="期末复习_16"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqbv86.jpg" alt="期末复习_17"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqc1oy.jpg" alt="期末复习_18"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqc1fj.jpg" alt="期末复习_19"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqcapv.jpg" alt="期末复习_20"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qqcdki.jpg" alt="期末复习_21"></p>]]></content>
-      
-      
+      <tags>
+        <tag>基础化学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>基础化学-基础化学期中考复习</title>
+    <url>/posts/e8354ece.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/5Ds6/%E5%9F%BA%E7%A1%80%E5%8C%96%E5%AD%A6%E6%9C%9F%E4%B8%AD%E8%80%83%E5%A4%8D%E4%B9%A0.pdf ' style='width:100%;height:900px'></iframe>
+]]></content>
       <categories>
-          
-          <category> 医学物理笔记 2024年 </category>
-          
+        <category>基础化学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医学物理笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医学物理-振动</title>
-      <link href="/posts/2507111698.html"/>
-      <url>/posts/2507111698.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/AQHE/%E6%8C%AF%E5%8A%A8.pdf ' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/03/qnb60b.jpg" alt="振动_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qnb8p0.jpg" alt="振动_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qnbf2i.jpg" alt="振动_02"></p>]]></content>
-      
-      
+      <tags>
+        <tag>基础化学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>基础化学-期末复习</title>
+    <url>/posts/ad41b490.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/8QCY/%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0.pdf ' style='width:100%;height:900px'></iframe>
+]]></content>
       <categories>
-          
-          <category> 医学物理笔记 2024年 </category>
-          
+        <category>基础化学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医学物理笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医学物理-干涉</title>
-      <link href="/posts/3851772144.html"/>
-      <url>/posts/3851772144.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/znF4/%E5%B9%B2%E6%B6%89.pdf ' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/03/qm2rja.jpg" alt="干涉_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qm336u.jpg" alt="干涉_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/qm39f5.jpg" alt="干涉_02"></p>]]></content>
-      
-      
+      <tags>
+        <tag>基础化学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>基础化学-氧化还原</title>
+    <url>/posts/3dab57ee.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/0WHm/%E6%B0%A7%E5%8C%96%E8%BF%98%E5%8E%9F.pdf ' style='width:100%;height:900px'></iframe>
+]]></content>
       <categories>
-          
-          <category> 医学物理笔记 2024年 </category>
-          
+        <category>基础化学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医学物理笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医学物理-原子核和放射性</title>
-      <link href="/posts/4224112327.html"/>
-      <url>/posts/4224112327.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/yXCL/%E5%8E%9F%E5%AD%90%E6%A0%B8%E5%92%8C%E6%94%BE%E5%B0%84%E6%80%A7.pdf ' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/03/qkzrl4.jpg" alt="原子核和放射性_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/ql07hd.jpg" alt="原子核和放射性_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/03/ql0p6r.jpg" alt="原子核和放射性_02"></p>]]></content>
-      
-      
+      <tags>
+        <tag>基础化学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>基础化学-热力学</title>
+    <url>/posts/67474cc.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/gRIG/%E7%83%AD%E5%8A%9B%E5%AD%A6.pdf ' style='width:100%;height:900px'></iframe>
+]]></content>
       <categories>
-          
-          <category> 医学物理笔记 2024年 </category>
-          
+        <category>基础化学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医学物理笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医学物理-声波</title>
-      <link href="/posts/3020368477.html"/>
-      <url>/posts/3020368477.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/x2ux/%E5%A3%B0%E6%B3%A2.pdf ' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/12unpvn.png" alt="声波_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/12uo2o9.png" alt="声波_01"></p>]]></content>
-      
-      
+      <tags>
+        <tag>基础化学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>基础化学-理想气体方程和液体气化</title>
+    <url>/posts/d13e0b26.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/lAUX/%E9%85%8D%E5%90%88%E7%89%A9.pdf ' style='width:100%;height:900px'></iframe>
+]]></content>
       <categories>
-          
-          <category> 医学物理笔记 2024年 </category>
-          
+        <category>基础化学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医学物理笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医学物理-光的偏振</title>
-      <link href="/posts/1908809462.html"/>
-      <url>/posts/1908809462.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/qjhX/%E5%85%89%E7%9A%84%E5%81%8F%E6%8C%AF.pdf ' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/12tlpqd.png" alt="光的偏振_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/12tlynw.png" alt="光的偏振_02"></p>]]></content>
-      
-      
+      <tags>
+        <tag>基础化学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>基础化学-电解质溶液</title>
+    <url>/posts/24faa819.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/kyT5/%E7%94%B5%E8%A7%A3%E8%B4%A8%E6%BA%B6%E6%B6%B2.pdf ' style='width:100%;height:900px'></iframe>]]></content>
       <categories>
-          
-          <category> 医学物理笔记 2024年 </category>
-          
+        <category>基础化学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医学物理笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医学物理-X-ray</title>
-      <link href="/posts/2071425241.html"/>
-      <url>/posts/2071425241.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/rRi2/X-ray.pdf ' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/12scm7y.jpg" alt="X-ray_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/12sdww7.jpg" alt="X-ray_01"></p>]]></content>
-      
-      
+      <tags>
+        <tag>基础化学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>基础化学-配合物</title>
+    <url>/posts/cd4bc04e.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/lAUX/%E9%85%8D%E5%90%88%E7%89%A9.pdf ' style='width:100%;height:900px'></iframe>
+]]></content>
       <categories>
-          
-          <category> 医学物理笔记 2024年 </category>
-          
+        <category>基础化学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医学物理笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>医学物理-光电效应</title>
-      <link href="/posts/3727302527.html"/>
-      <url>/posts/3727302527.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/w0ty/%E5%85%89%E7%94%B5%E6%95%88%E5%BA%94.pdf ' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/124i6mo.jpg" alt="光电效应_00"></p>]]></content>
-      
-      
+      <tags>
+        <tag>基础化学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>形势与政策-迎新和用老</title>
+    <url>/posts/e0c00a03.html</url>
+    <content><![CDATA[<h1 id="原文"><a href="#原文" class="headerlink" title="原文"></a>原文</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/mLcW/%E8%BF%8E%E6%96%B0%E5%92%8C%E7%94%A8%E8%80%81.pdf ' style='width:100%;height:900px'></iframe>
+
+<h1 id="查重报告"><a href="#查重报告" class="headerlink" title="查重报告"></a>查重报告</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/nnfm/%E8%BF%8E%E6%96%B0%E5%92%8C%E7%94%A8%E8%80%81_%E7%AE%80%E6%B4%81%E6%8A%A5%E5%91%8A.pdf ' style='width:100%;height:900px'></iframe>]]></content>
       <categories>
-          
-          <category> 医学物理笔记 2024年 </category>
-          
+        <category>论文集合</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 医学物理笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>生物学-人类染色体和染色体病</title>
-      <link href="/posts/1975710780.html"/>
-      <url>/posts/1975710780.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/14.人类染色体和染色体病.pdf' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10o92ii.jpg" alt="14.人类染色体和染色体病_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10o9a95.jpg" alt="14.人类染色体和染色体病_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10o96yl.jpg" alt="14.人类染色体和染色体病_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10o9a81.jpg" alt="14.人类染色体和染色体病_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10o9elq.jpg" alt="14.人类染色体和染色体病_04"></p>]]></content>
-      
-      
+      <tags>
+        <tag>袖珍论文</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>概率统计在医学研究中的应用</title>
+    <url>/posts/6c369809.html</url>
+    <content><![CDATA[<h1 id="由于Markdown文件的排版限制，只展示PDF版，请见谅。"><a href="#由于Markdown文件的排版限制，只展示PDF版，请见谅。" class="headerlink" title="由于Markdown文件的排版限制，只展示PDF版，请见谅。"></a>由于Markdown文件的排版限制，只展示PDF版，请见谅。</h1><iframe src='/js/pdfjs/web/viewer.html?file=https://pan.wcq060324.xyz/f/MXiz/%E6%A6%82%E7%8E%87%E7%BB%9F%E8%AE%A1%E5%9C%A8%E5%8C%BB%E5%AD%A6%E7%A0%94%E7%A9%B6%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8.pdf ' style='width:100%;height:900px'></iframe>]]></content>
       <categories>
-          
-          <category> 生物学笔记 2024年 </category>
-          
+        <category>论文集合</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 生物学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>生物学-基因的结构与、功能</title>
-      <link href="/posts/3819801495.html"/>
-      <url>/posts/3819801495.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/10.基因的结构与、功能.pdf' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10muxfg.jpg" alt="10.基因的结构与、功能_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10muveq.jpg" alt="10.基因的结构与、功能_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10muvwl.jpg" alt="10.基因的结构与、功能_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10mv2j5.jpg" alt="10.基因的结构与、功能_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10mv6ld.jpg" alt="10.基因的结构与、功能_04"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10mv9we.jpg" alt="10.基因的结构与、功能_05"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10mvmgt.jpg" alt="10.基因的结构与、功能_06"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10mvg5l.jpg" alt="10.基因的结构与、功能_07"></p>]]></content>
-      
-      
+      <tags>
+        <tag>袖珍论文</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>生物学-DNA的复制、转录</title>
+    <url>/posts/205016360.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/9.DNA的复制、转录.pdf' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10md94d.jpg" alt="9.DNA的复制、转录_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10md9v6.jpg" alt="9.DNA的复制、转录_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10mdmbf.jpg" alt="9.DNA的复制、转录_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10mdi22.jpg" alt="9.DNA的复制、转录_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10mdhpb.jpg" alt="9.DNA的复制、转录_04"></p>
+]]></content>
       <categories>
-          
-          <category> 生物学笔记 2024年 </category>
-          
+        <category>生物学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 生物学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>生物学-细胞的分裂增殖</title>
-      <link href="/posts/1334475428.html"/>
-      <url>/posts/1334475428.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/11.细胞的分裂增殖.pdf' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10nd9zv.jpg" alt="11.细胞的分裂增殖_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10ndath.jpg" alt="11.细胞的分裂增殖_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10ndrvy.jpg" alt="11.细胞的分裂增殖_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10ndvm6.jpg" alt="11.细胞的分裂增殖_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10nea6n.jpg" alt="11.细胞的分裂增殖_04"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10ne7pi.jpg" alt="11.细胞的分裂增殖_05"></p>]]></content>
-      
-      
+      <tags>
+        <tag>生物学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>生物学-人类染色体和染色体病</title>
+    <url>/posts/1975710780.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/14.人类染色体和染色体病.pdf' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10o92ii.jpg" alt="14.人类染色体和染色体病_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10o9a95.jpg" alt="14.人类染色体和染色体病_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10o96yl.jpg" alt="14.人类染色体和染色体病_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10o9a81.jpg" alt="14.人类染色体和染色体病_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10o9elq.jpg" alt="14.人类染色体和染色体病_04"></p>
+]]></content>
       <categories>
-          
-          <category> 生物学笔记 2024年 </category>
-          
+        <category>生物学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 生物学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>生物学-核糖体和细胞骨架</title>
-      <link href="/posts/4097134367.html"/>
-      <url>/posts/4097134367.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/6.核糖体和细胞骨架.pdf' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10jzku1.jpg" alt="6.核糖体和细胞骨架_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10k08f4.jpg" alt="6.核糖体和细胞骨架_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10k0kvw.jpg" alt="6.核糖体和细胞骨架_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10k0xp5.jpg" alt="6.核糖体和细胞骨架_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10k1bjj.jpg" alt="6.核糖体和细胞骨架_04"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10k1rv4.jpg" alt="6.核糖体和细胞骨架_05"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10k1zhl.jpg" alt="6.核糖体和细胞骨架_06"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10k2gg9.jpg" alt="6.核糖体和细胞骨架_07"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10k2mfo.jpg" alt="6.核糖体和细胞骨架_08"></p>]]></content>
-      
-      
+      <tags>
+        <tag>生物学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>生物学-内质网</title>
+    <url>/posts/3850052743.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/4.内质网.pdf' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10j9azv.jpg" alt="4.内质网_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10j9hl3.jpg" alt="4.内质网_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10ja1vx.jpg" alt="4.内质网_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10jaipa.jpg" alt="4.内质网_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10jani6.jpg" alt="4.内质网_04"></p>
+]]></content>
       <categories>
-          
-          <category> 生物学笔记 2024年 </category>
-          
+        <category>生物学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 生物学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>生物学-概论</title>
-      <link href="/posts/553985340.html"/>
-      <url>/posts/553985340.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/1.概论.pdf' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10o9elq.jpg" alt="1.概论_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i1mbr.jpg" alt="1.概论_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i1vas.jpg" alt="1.概论_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i2cun.jpg" alt="1.概论_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i2q1q.jpg" alt="1.概论_04"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i3b1u.jpg" alt="1.概论_05"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i3oxj.jpg" alt="1.概论_06"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i3s47.jpg" alt="1.概论_07"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i4bdd.jpg" alt="1.概论_08"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i4uw7.jpg" alt="1.概论_09"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i553b.jpg" alt="1.概论_10"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i5uef.jpg" alt="1.概论_11"></p>]]></content>
-      
-      
+      <tags>
+        <tag>生物学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>生物学-基因的结构与、功能</title>
+    <url>/posts/3819801495.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/10.基因的结构与、功能.pdf' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10muxfg.jpg" alt="10.基因的结构与、功能_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10muveq.jpg" alt="10.基因的结构与、功能_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10muvwl.jpg" alt="10.基因的结构与、功能_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10mv2j5.jpg" alt="10.基因的结构与、功能_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10mv6ld.jpg" alt="10.基因的结构与、功能_04"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10mv9we.jpg" alt="10.基因的结构与、功能_05"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10mvmgt.jpg" alt="10.基因的结构与、功能_06"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10mvg5l.jpg" alt="10.基因的结构与、功能_07"></p>
+]]></content>
       <categories>
-          
-          <category> 生物学笔记 2024年 </category>
-          
+        <category>生物学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 生物学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>生物学-内质网</title>
-      <link href="/posts/3850052743.html"/>
-      <url>/posts/3850052743.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/4.内质网.pdf' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10j9azv.jpg" alt="4.内质网_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10j9hl3.jpg" alt="4.内质网_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10ja1vx.jpg" alt="4.内质网_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10jaipa.jpg" alt="4.内质网_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10jani6.jpg" alt="4.内质网_04"></p>]]></content>
-      
-      
+      <tags>
+        <tag>生物学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>生物学-核糖体和细胞骨架</title>
+    <url>/posts/4097134367.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/6.核糖体和细胞骨架.pdf' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10jzku1.jpg" alt="6.核糖体和细胞骨架_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10k08f4.jpg" alt="6.核糖体和细胞骨架_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10k0kvw.jpg" alt="6.核糖体和细胞骨架_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10k0xp5.jpg" alt="6.核糖体和细胞骨架_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10k1bjj.jpg" alt="6.核糖体和细胞骨架_04"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10k1rv4.jpg" alt="6.核糖体和细胞骨架_05"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10k1zhl.jpg" alt="6.核糖体和细胞骨架_06"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10k2gg9.jpg" alt="6.核糖体和细胞骨架_07"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10k2mfo.jpg" alt="6.核糖体和细胞骨架_08"></p>
+]]></content>
       <categories>
-          
-          <category> 生物学笔记 2024年 </category>
-          
+        <category>生物学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 生物学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>生物学-DNA的复制、转录</title>
-      <link href="/posts/205016360.html"/>
-      <url>/posts/205016360.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/9.DNA的复制、转录.pdf' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10md94d.jpg" alt="9.DNA的复制、转录_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10md9v6.jpg" alt="9.DNA的复制、转录_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10mdmbf.jpg" alt="9.DNA的复制、转录_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10mdi22.jpg" alt="9.DNA的复制、转录_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10mdhpb.jpg" alt="9.DNA的复制、转录_04"></p>]]></content>
-      
-      
+      <tags>
+        <tag>生物学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>生物学-概论</title>
+    <url>/posts/553985340.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/1.概论.pdf' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10o9elq.jpg" alt="1.概论_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i1mbr.jpg" alt="1.概论_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i1vas.jpg" alt="1.概论_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i2cun.jpg" alt="1.概论_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i2q1q.jpg" alt="1.概论_04"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i3b1u.jpg" alt="1.概论_05"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i3oxj.jpg" alt="1.概论_06"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i3s47.jpg" alt="1.概论_07"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i4bdd.jpg" alt="1.概论_08"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i4uw7.jpg" alt="1.概论_09"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i553b.jpg" alt="1.概论_10"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10i5uef.jpg" alt="1.概论_11"></p>
+]]></content>
       <categories>
-          
-          <category> 生物学笔记 2024年 </category>
-          
+        <category>生物学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 生物学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>生物学-细胞膜、物质运输和信息传导</title>
-      <link href="/posts/3887213875.html"/>
-      <url>/posts/3887213875.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/3.细胞膜、物质运输和信息传导.pdf' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10iskgf.jpg" alt="3.细胞膜、物质运输和信息传导_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10iszdq.jpg" alt="3.细胞膜、物质运输和信息传导_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10itctz.jpg" alt="3.细胞膜、物质运输和信息传导_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10itjii.jpg" alt="3.细胞膜、物质运输和信息传导_03"></p>]]></content>
-      
-      
+      <tags>
+        <tag>生物学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>生物学-溶酶体和过氧化物酶体</title>
+    <url>/posts/1142037232.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/7.溶酶体和过氧化物酶体.pdf' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10khvkx.jpg" alt="7.溶酶体和过氧化物酶体_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10kibbb.jpg" alt="7.溶酶体和过氧化物酶体_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10kinwc.jpg" alt="7.溶酶体和过氧化物酶体_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10kit6w.jpg" alt="7.溶酶体和过氧化物酶体_03"></p>
+]]></content>
       <categories>
-          
-          <category> 生物学笔记 2024年 </category>
-          
+        <category>生物学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 生物学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>生物学-高尔基体和线粒体</title>
-      <link href="/posts/2446539531.html"/>
-      <url>/posts/2446539531.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/5.高尔基体和线粒体.pdf' style='width:100%;height:600px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10jh3ui.jpg" alt="5.高尔基体和线粒体_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10jhmy8.jpg" alt="5.高尔基体和线粒体_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10jhqoj.jpg" alt="5.高尔基体和线粒体_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10jiaii.jpg" alt="5.高尔基体和线粒体_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10jiqd6.jpg" alt="5.高尔基体和线粒体_04"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10jj3gx.jpg" alt="5.高尔基体和线粒体_05"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10js30s.jpg" alt="5.高尔基体和线粒体_06"></p>]]></content>
-      
-      
+      <tags>
+        <tag>生物学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>生物学-细胞分化、衰老、死亡</title>
+    <url>/posts/2211023589.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/12.细胞分化、衰老、死亡.pdf' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10nhnz1.jpg" alt="12.细胞分化、衰老、死亡_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10nhjxq.jpg" alt="12.细胞分化、衰老、死亡_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10nhwsw.jpg" alt="12.细胞分化、衰老、死亡_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10ni3o2.jpg" alt="12.细胞分化、衰老、死亡_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10ni61h.jpg" alt="12.细胞分化、衰老、死亡_04"></p>
+]]></content>
       <categories>
-          
-          <category> 生物学笔记 2024年 </category>
-          
+        <category>生物学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 生物学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>生物学-遗传学基础</title>
-      <link href="/posts/1674320774.html"/>
-      <url>/posts/1674320774.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/13.遗传学基础.pdff' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10nyqdx.jpg" alt="13.遗传学基础_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10nyoox.jpg" alt="13.遗传学基础_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10nz04h.jpg" alt="13.遗传学基础_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10nza9e.jpg" alt="13.遗传学基础_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10nzcic.jpg" alt="13.遗传学基础_04"></p>]]></content>
-      
-      
+      <tags>
+        <tag>生物学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>生物学-细胞核</title>
+    <url>/posts/2666532252.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/8.细胞核.pdf' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10lwicm.jpg" alt="8.细胞核_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10m5s2m.jpg" alt="8.细胞核_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10m5zvk.jpg" alt="8.细胞核_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10m6fzq.jpg" alt="8.细胞核_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10m6mbr.jpg" alt="8.细胞核_04"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10m6sw6.jpg" alt="8.细胞核_05"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10m6x6c.jpg" alt="8.细胞核_06"></p>
+]]></content>
       <categories>
-          
-          <category> 生物学笔记 2024年 </category>
-          
+        <category>生物学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 生物学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>生物学-细胞分化、衰老、死亡</title>
-      <link href="/posts/2211023589.html"/>
-      <url>/posts/2211023589.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/12.细胞分化、衰老、死亡.pdf' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10nhnz1.jpg" alt="12.细胞分化、衰老、死亡_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10nhjxq.jpg" alt="12.细胞分化、衰老、死亡_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10nhwsw.jpg" alt="12.细胞分化、衰老、死亡_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10ni3o2.jpg" alt="12.细胞分化、衰老、死亡_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10ni61h.jpg" alt="12.细胞分化、衰老、死亡_04"></p>]]></content>
-      
-      
+      <tags>
+        <tag>生物学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>生物学-细胞的分裂增殖</title>
+    <url>/posts/1334475428.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/11.细胞的分裂增殖.pdf' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10nd9zv.jpg" alt="11.细胞的分裂增殖_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10ndath.jpg" alt="11.细胞的分裂增殖_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10ndrvy.jpg" alt="11.细胞的分裂增殖_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10ndvm6.jpg" alt="11.细胞的分裂增殖_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10nea6n.jpg" alt="11.细胞的分裂增殖_04"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10ne7pi.jpg" alt="11.细胞的分裂增殖_05"></p>
+]]></content>
       <categories>
-          
-          <category> 生物学笔记 2024年 </category>
-          
+        <category>生物学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 生物学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>生物学-溶酶体和过氧化物酶体</title>
-      <link href="/posts/1142037232.html"/>
-      <url>/posts/1142037232.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/7.溶酶体和过氧化物酶体.pdf' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10khvkx.jpg" alt="7.溶酶体和过氧化物酶体_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10kibbb.jpg" alt="7.溶酶体和过氧化物酶体_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10kinwc.jpg" alt="7.溶酶体和过氧化物酶体_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10kit6w.jpg" alt="7.溶酶体和过氧化物酶体_03"></p>]]></content>
-      
-      
+      <tags>
+        <tag>生物学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>生物学-细胞膜</title>
+    <url>/posts/1806911331.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/2.细胞膜.pdf' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10ind2z.jpg" alt="2.细胞膜_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10io194.jpg" alt="2.细胞膜_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10ioinr.jpg" alt="2.细胞膜_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10ioqgq.jpg" alt="2.细胞膜_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10ip1p0.jpg" alt="2.细胞膜_04"></p>
+]]></content>
       <categories>
-          
-          <category> 生物学笔记 2024年 </category>
-          
+        <category>生物学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 生物学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>生物学-细胞核</title>
-      <link href="/posts/2666532252.html"/>
-      <url>/posts/2666532252.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/8.细胞核.pdf' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10lwicm.jpg" alt="8.细胞核_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10m5s2m.jpg" alt="8.细胞核_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10m5zvk.jpg" alt="8.细胞核_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10m6fzq.jpg" alt="8.细胞核_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10m6mbr.jpg" alt="8.细胞核_04"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10m6sw6.jpg" alt="8.细胞核_05"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10m6x6c.jpg" alt="8.细胞核_06"></p>]]></content>
-      
-      
+      <tags>
+        <tag>生物学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>生物学-细胞膜、物质运输和信息传导</title>
+    <url>/posts/3887213875.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/3.细胞膜、物质运输和信息传导.pdf' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10iskgf.jpg" alt="3.细胞膜、物质运输和信息传导_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10iszdq.jpg" alt="3.细胞膜、物质运输和信息传导_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10itctz.jpg" alt="3.细胞膜、物质运输和信息传导_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10itjii.jpg" alt="3.细胞膜、物质运输和信息传导_03"></p>
+]]></content>
       <categories>
-          
-          <category> 生物学笔记 2024年 </category>
-          
+        <category>生物学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 生物学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>生物学-细胞膜</title>
-      <link href="/posts/1806911331.html"/>
-      <url>/posts/1806911331.html</url>
-      
-        <content type="html"><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/2.细胞膜.pdf' style='width:100%;height:900px'></iframe><h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10ind2z.jpg" alt="2.细胞膜_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10io194.jpg" alt="2.细胞膜_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10ioinr.jpg" alt="2.细胞膜_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10ioqgq.jpg" alt="2.细胞膜_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10ip1p0.jpg" alt="2.细胞膜_04"></p>]]></content>
-      
-      
+      <tags>
+        <tag>生物学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>生物学-遗传学基础</title>
+    <url>/posts/1674320774.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/13.遗传学基础.pdff' style='width:100%;height:900px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10nyqdx.jpg" alt="13.遗传学基础_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10nyoox.jpg" alt="13.遗传学基础_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10nz04h.jpg" alt="13.遗传学基础_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10nza9e.jpg" alt="13.遗传学基础_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10nzcic.jpg" alt="13.遗传学基础_04"></p>
+]]></content>
       <categories>
-          
-          <category> 生物学笔记 2024年 </category>
-          
+        <category>生物学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 生物学笔记 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>哪吒探针部署教程</title>
-      <link href="/posts/538270049.html"/>
-      <url>/posts/538270049.html</url>
-      
-        <content type="html"><![CDATA[<hr><h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><p>哪吒探针已经迎来了最新的V1版本，相对比与V0版本，有很大的不同，界面变得更加美观，也提供了一些便利，只需要一个域名就可以完成部署。我们需要准备一个作为Dashboard的服务器，一个解析到该服务器的域名即可，当然，还有你需要监控的小鸡啦。</p><h1 id="二、完成docker和docker-compose的安装"><a href="#二、完成docker和docker-compose的安装" class="headerlink" title="二、完成docker和docker-compose的安装"></a>二、完成docker和docker-compose的安装</h1><h2 id="docker的安装"><a href="#docker的安装" class="headerlink" title="docker的安装"></a>docker的安装</h2><p>我们先对系统进行更新：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo apt update</span><br><span class="line">sudo apt upgrade</span><br><span class="line">sudo apt full-upgrade</span><br></pre></td></tr></table></figure><p>Docker在Ubuntu上依赖一些软件包。执行以下命令来安装这些依赖：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install ca-certificates curl gnupg lsb-release</span><br></pre></td></tr></table></figure><p>执行以下命令来添加Docker官方的GPG密钥：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL http://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add -</span><br></pre></td></tr></table></figure><p>执行以下命令来添加Docker的软件源：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository &quot;deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable&quot;</span><br></pre></td></tr></table></figure><p>执行以下命令来安装Docker：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install docker-ce docker-ce-cli containerd.io</span><br></pre></td></tr></table></figure><p>启动docker：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl start docker</span><br><span class="line">sudo systemctl status docker</span><br><span class="line">sudo systemctl enable docker</span><br></pre></td></tr></table></figure><h2 id="docker-compose的安装"><a href="#docker-compose的安装" class="headerlink" title="docker-compose的安装"></a>docker-compose的安装</h2><p>执行下面的命令：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo curl -SL \</span><br><span class="line">https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-linux-x86_64 \</span><br><span class="line">-o /usr/local/bin/docker-compose</span><br></pre></td></tr></table></figure><h1 id="三、解析域名并设置反向代理"><a href="#三、解析域名并设置反向代理" class="headerlink" title="三、解析域名并设置反向代理"></a>三、解析域名并设置反向代理</h1><h2 id="解析域名"><a href="#解析域名" class="headerlink" title="解析域名"></a>解析域名</h2><p>我是在阿里云上购买了一个域名然后托管到Cloudflare上，在Cloudflare的控制面板上进行DNS解释设置，你可以选择其他方式进行域名的解析。</p><p><img src="https://www.helloimg.com/i/2025/02/01/679dc780ec952.png" alt="域名解析"></p><p>如上图所示，添加一个A Mark。名称你可以不填，也可以按照自己的喜好设置一个二级域名，同时地址填写你作为Dashboard的服务器的ipv4地址。如果你只有ipv6地址，则需添加AAAA Mark。记得关闭小云朵（代理），其他不用更改，点击保存。这样域名解析就完毕了，你可以打开cmd，ping一下你的网址，如果ping通了，则表示解析已完成，可以进行下一步了。</p><h2 id="设置反向代理"><a href="#设置反向代理" class="headerlink" title="设置反向代理"></a>设置反向代理</h2><p>设置完反向代理后就不用以域名：端口的形式访问，可以直接使用域名进行访问。这里使用由一点科技提供的一键脚本，可以同时进行反向代理和证书申请。</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget -O manage_nginx.sh &quot;https://raw.githubusercontent.com/1keji/AddIPv6/main/manage_nginx.sh&quot; &amp;&amp; chmod +x manage_nginx.sh &amp;&amp; ./manage_nginx.sh</span><br></pre></td></tr></table></figure><p>选择1.安装Nginx，输入你的真实的邮箱地址，再将你解析好的域名填入，最后将反向代理的目标地址设置为本机地址的8008端口，即<a href="http://127.0.0.1:8008。">http://127.0.0.1:8008。</a></p><p>完成后就可以用域名来访问啦！！！</p><h1 id="安装哪吒面板"><a href="#安装哪吒面板" class="headerlink" title="安装哪吒面板"></a>安装哪吒面板</h1><p>访问哪吒官网（ <a href="https://nezha.wiki/guide/dashboard.html">https://nezha.wiki/guide/dashboard.html</a> ），执行官方提供的安装脚本。</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -L https://raw.githubusercontent.com/nezhahq/scripts/refs/heads/main/install.sh -o nezha.sh &amp;&amp; chmod +x nezha.sh &amp;&amp; sudo ./nezha.sh</span><br></pre></td></tr></table></figure><p>会出现如下页面：</p><p><img src="https://www.helloimg.com/i/2025/02/01/679dc64965560.png" alt="面板安装"></p><p>然后选择1.docker安装，再选择1.安装面板端。</p><p>其中访问端口无需改变，地址填写上面你解析好的域名，站点名称可以自定义。</p><p>安装完成后就可以在浏览器里输入你的域名来进行访问啦！你可以登录后台进行你想要的设置，例如改变主题，设置密码，改变用户名等，这里不加赘述。</p><h1 id="安装agent端"><a href="#安装agent端" class="headerlink" title="安装agent端"></a>安装agent端</h1><p>登录到面板的后台，由如下界面：</p><p><img src="https://www.helloimg.com/i/2025/02/01/679dca282f583.png" alt="agent安装"></p><p>找到右上角的“安装命令”，选择适合你的安装脚本，在你需要监控的小鸡上运行，看到installed successfully即可。在下面的服务器列表就可以看到你的服务器了。可以选择修改该服务器的名称，添加备注等，不加以赘述。</p>]]></content>
-      
-      
+      <tags>
+        <tag>生物学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>生物学-高尔基体和线粒体</title>
+    <url>/posts/2446539531.html</url>
+    <content><![CDATA[<iframe src='/js/pdfjs/web/viewer.html?file=/PDFs/Bio/5.高尔基体和线粒体.pdf' style='width:100%;height:600px'></iframe>
+
+<h1 id="若移动端无法加载PDF，可观看图片！！！"><a href="#若移动端无法加载PDF，可观看图片！！！" class="headerlink" title="若移动端无法加载PDF，可观看图片！！！"></a>若移动端无法加载PDF，可观看图片！！！</h1><p><img src="https://img.wcq060324.xyz/i/2025/02/02/10jh3ui.jpg" alt="5.高尔基体和线粒体_00"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10jhmy8.jpg" alt="5.高尔基体和线粒体_01"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10jhqoj.jpg" alt="5.高尔基体和线粒体_02"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10jiaii.jpg" alt="5.高尔基体和线粒体_03"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10jiqd6.jpg" alt="5.高尔基体和线粒体_04"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10jj3gx.jpg" alt="5.高尔基体和线粒体_05"><br><img src="https://img.wcq060324.xyz/i/2025/02/02/10js30s.jpg" alt="5.高尔基体和线粒体_06"></p>
+]]></content>
       <categories>
-          
-          <category> 小技术杂谈 </category>
-          
+        <category>生物学笔记 2024年</category>
       </categories>
-      
-      
-        <tags>
-            
-            <tag> 哪吒探针 </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-  
-  
+      <tags>
+        <tag>生物学笔记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>哪吒监控的简单美化</title>
+    <url>/posts/602ac419.html</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>标题里说是简单美化，但其实真的也是简单美化。因为哪吒探针本身只是一个工具而已，所有可供DIY的部分并不多。我们可以修改的只有网页背景和右上角坐着的小人而已。当然，官方也提供了两种主题，可以更换。（个人觉得ASCII的那个不大行，内容有限，建议选择NaZhua主题，那个不错。）</p>
+<h1 id="直接更换主题"><a href="#直接更换主题" class="headerlink" title="直接更换主题"></a>直接更换主题</h1><p>直接来到后台，进入系统设置，就可以找到主题那一栏。作者内置了两个主题，可以进行直接更换，非常方便。<br><img src="https://img.wcq060324.xyz/i/2025/02/09/123veel.jpeg" alt="微信截图_20250209230313"></p>
+<h1 id="DIY"><a href="#DIY" class="headerlink" title="DIY"></a>DIY</h1><p>下面提供一个直接的代码，请根据自己的需要进行更改：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">window.CustomBackgroundImage = &quot;bg&#x27;s url&quot;;</span><br><span class="line">window.CustomMobileBackgroundImage = &quot;moble bg&#x27;s url&quot;;</span><br><span class="line">window.CustomLogo = &quot;logo&#x27;s url&quot;;</span><br><span class="line">window.CustomDesc = &quot;description&quot;;</span><br><span class="line">window.ShowNetTransfer = true;</span><br><span class="line">window.CustomIllustration = &quot;illustration&#x27;s url&quot;;</span><br><span class="line">window.FixedTopServerName = true;</span><br><span class="line">window.ForceUseSvgFlag = true;</span><br><span class="line">var observer = new MutationObserver(function(mutationsList, observer) &#123;</span><br><span class="line">var xpath = &quot;/html/body/div/div/main/div[2]/section[1]/div[4]/div&quot;;</span><br><span class="line">var container = document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;</span><br><span class="line"></span><br><span class="line">if (container) &#123;</span><br><span class="line">observer.disconnect();</span><br><span class="line">var existingImg = container.querySelector(&quot;img&quot;);</span><br><span class="line">if (existingImg) &#123;</span><br><span class="line">container.removeChild(existingImg);</span><br><span class="line">&#125;</span><br><span class="line">var imgElement = document.createElement(&quot;img&quot;);</span><br><span class="line">imgElement.src = &quot;illustration&#x27;s url&quot;;</span><br><span class="line">imgElement.style.position = &quot;absolute&quot;;</span><br><span class="line">imgElement.style.zIndex = &quot;10&quot;;</span><br><span class="line">container.appendChild(imgElement);</span><br><span class="line">&#125;</span><br><span class="line">&#125;);</span><br><span class="line">var config = &#123; childList: true, subtree: true &#125;;</span><br><span class="line">observer.observe(document.body, config);</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>小技术杂谈</category>
+      </categories>
+      <tags>
+        <tag>哪吒探针</tag>
+      </tags>
+  </entry>
 </search>
