@@ -162,7 +162,7 @@ div#archive {
   background: #191919ee;
 }
 #footer {
-    background: rgba(255,255,255,.15);
+    background: rgba(255,255,255,1);
     color: #000;
     border-top-right-radius: 20px;
     border-top-left-radius: 20px;
@@ -204,16 +204,3 @@ div#runtime {
   [data-theme="dark"] #page-header::before {
     background: transparent !important;
   }
-  
-#footer:before
-  background-color: alpha(#FFF, .5)
-
-  [data-theme='dark'] &
-  background-color: alpha(#000, .5)
-
-#footer-wrap, #footer-wrap a
-  color: #111
-  transition: unset
-
-  [data-theme='dark'] &
-    color: var(--light-grey)
