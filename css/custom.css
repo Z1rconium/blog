@@ -168,16 +168,3 @@ div#archive {
     border-top-left-radius: 20px;
     backdrop-filter: saturate(100%) blur(5px)
 }
-
-/* Footer settings */
-#footer::before {
-    background: rgba(255,255,255,.15)
-}
-
-#footer #footer-wrap {
-    color: var(--font-color)
-}
-
-#footer #footer-wrap a {
-    color: var(--font-color)
-}
