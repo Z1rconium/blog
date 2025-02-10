@@ -934,7 +934,7 @@
       </tags>
   </entry>
   <entry>
-    <title>hexo博客搭建</title>
+    <title>Hexo博客搭建</title>
     <url>/posts/afcbc60d.html</url>
     <content><![CDATA[<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>&emsp;&emsp;Hexo 是一个快速、简洁且高效的博客框架。 Hexo 使用 Markdown（或其他标记语言）解析文章，在几秒内，即可利用靓丽的主题生成静态网页。Hexo是基于Node.js和Git工具的静态博客。</p>
 <h1 id="开始安装"><a href="#开始安装" class="headerlink" title="开始安装"></a>开始安装</h1><h2 id="安装Git"><a href="#安装Git" class="headerlink" title="安装Git"></a>安装Git</h2><p>&emsp;&emsp;你可以选择vps来作为博客的本地，也可以用你的电脑，两者并无区别。选择对应系统的安装方式。<br>&emsp;&emsp;Windows：下载并安装git。( <a href="https://git-scm.com/downloads/win">https://git-scm.com/downloads/win</a> )<br>&emsp;&emsp;Mac：使用 Homebrew, MacPorts 或者下载 安装程序。<br>&emsp;&emsp;Linux (Ubuntu, Debian)：<code>sudo apt-get install git-core</code><br>&emsp;&emsp;Linux (Fedora, Red Hat, CentOS)：<code>sudo yum install git-core</code></p>
